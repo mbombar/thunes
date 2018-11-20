@@ -1,3 +1,15 @@
 from django.shortcuts import render
 
-# Create your views here.
+from django.contrib.auth.decorators import login_required
+
+def login(request):
+    pass
+
+@login_required
+def logout(request):
+    pass
+
+
+@login_required
+def edit_user(request, uid):
+    pass
