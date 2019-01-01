@@ -10,10 +10,20 @@ class Currency(models.Model):
     def __str__(self):
         return "{} ({})".format(self.name, self.symbol)
 
-class Transaction(models.Model):
-    origin = models.ForeignKey(User, on_delete=models.PROTECT, related_name="origin")
-    destination = models.ForeignKey(User, null=True, on_delete=models.PROTECT, related_name="destination")
+class Share(models.Model):
+    value = models.DecimalField(decimal_places=2, max_digits=10)
+    owner = models.ForeignKey(User, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return "{} {}".format(self.owner, self.value)
+
+class Expense(models.Model):
+    name = models.CharField(max_length=50)
     group = models.ForeignKey(Group, on_delete=models.PROTECT)
     description = models.TextField()
+    shares = models.ManyToManyField(Share)
     value = models.DecimalField(decimal_places=2, max_digits=10)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return "{}-{} {} {}".format(self.group, self.name, self.value, self.currency)
