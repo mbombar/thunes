@@ -1,0 +1,17 @@
+[uwsgi]
+plugin	        =       python3
+chdir           =       /var/www/MathoosHouse/
+module          =       MathoosHouse.wsgi
+
+uid             =       www-data
+gid             =       www-data
+
+
+master          =       true
+processes       =       4
+
+socket          =       /var/www/MathoosHouse/WebUtils/MathoosHouse.sock
+chmod-socket	=       777
+
+home            =       /var/www/MathoosHouse/.env
+vacuum          =       true
