@@ -32,11 +32,11 @@
 	    <ul class="nav navbar-nav navbar-right">
 	      <li>
 		{% if request.user.is_authenticated %}
-		<a href="{% url 'logout' %}">
+		<a href="{% url 'admin:logout' %}">
 		  <span class="glyphicon glyphicon-log-out"></span> Logout
 		</a>
 		{% else %}
-		<a href="{% url 'admin:index' %}">
+		<a href="{% url 'admin:login' %}">
 		  <span class="glyphicon glyphicon-log-in"></span> Login
 		</a>
 		{% endif %}
