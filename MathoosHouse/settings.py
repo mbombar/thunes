@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+# /!\ Je sais pas trop à quoi servent ces variables faut que je lise de la doc
 LOGIN_URL = '/admin/login/'
 LOGIN_REDIRECT_URL = '/login'
 
