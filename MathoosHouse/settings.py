@@ -28,9 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # /!\ Je sais pas trop à quoi servent ces variables faut que je lise de la doc
-LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
-
+LOGOUT_REDIRECT_URL = '/'
 # Application definition
 
 INSTALLED_APPS = [
