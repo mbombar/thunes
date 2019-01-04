@@ -11,6 +11,14 @@ virtualenv -p python3 .env
 source .env/bin/activate
 ```
 
+Installer les dépendances :
+
+```
+pip3 install django
+pip3 install django-bootstrap3
+```
+
+
 Installer les migrations :
 
 ```./manage.py migrate```
