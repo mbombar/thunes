@@ -20,7 +20,7 @@ server {
     
     location / {
         uwsgi_pass  django;
-	include uwsgi_params;
+	include /var/www/MathoosHouse/WebUtils/uwsgi_params;
     }
 }
 			
