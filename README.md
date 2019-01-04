@@ -15,7 +15,8 @@ Installer les dépendances :
 
 ```
 pip3 install django
-pip3 install django-bootstrap3
+pip3 install django-bootstrap4
+pip3 install django-icons
 ```
 
 

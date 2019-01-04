@@ -2,7 +2,7 @@
 
 {# Load the tag library #}
 {% load bootstrap4 %}
-{% load bootstrap3 %}
+{% load icons %}
 
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
@@ -14,53 +14,27 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <title>{% block title %}Thunes !!{% endblock %}</title>
   </head>
 
   <body>
-    <div id="wrap">
-      <nav class="navbar navbar-inverse">
-	<div class="container-fluid">
-	  <div class="navbar-header">
-	    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-	      <span class="icon-bar"></span>
-	      <span class="icon-bar"></span>
-	      <span class="icon-bar"></span>
-	    </button>
-	  </div>
-	  <div class="collapse navbar-collapse" id="myNavbar">
-	    <ul class="nav navbar-nav navbar-right">
-	      <li>
-		{% if request.user.is_authenticated %}
-		<a href="{% url 'admin:logout' %}">
-		  <span class="glyphicon glyphicon-log-out"></span> Logout
-		</a>
-		{% else %}
-		<a href="{% url 'login' %}">
-		  <span class="glyphicon glyphicon-log-in"></span> Login
-		</a>
-		{% endif %}
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+      <ul class="navbar-nav ml-auto">
+	      <li class="nav-item">
+	{% if request.user.is_authenticated %}
+	<a class="nav-link" href="{% url 'logout' %}">{% icon "sign-out-alt"%} Logout </a>
+	{% else %}
+	<a class="nav-link" href="{% url 'login' %}">{% icon "sign-in-alt" %} Login </a>
+	{% endif %}
 	      </li>
-	    </ul>
-	  </div>
-	</div>
-      </nav>
-
-      <div id="main" class="container-fluid text-center">
-	<div class="row content">
-	  <div class="col-sm-8 text-left">
-	    {% block content %}{% endblock %}
-	  </div>
-	</div>
-      </div>
+      </ul>
+    </nav>
+    </br>
+    <div class="container">
+      {% block content %}
+      {% endblock %}
     </div>
-
-    <footer class="navbar">
-      <div class="containerfluid text-center">
-	<h1>Coucou, je teste une interface graphique</h1>
-      </div>
-    </footer>
-
-
   </body>
+
 </html>
