@@ -26,6 +26,7 @@ def show_balance(request, gid):
         sum_shares = sum(exp.shares.all().values_list("value", flat=True))
         for u in group_users:
             users_balance[str(u)] -= (exp.shares.get(owner=u).value/sum_shares)*exp.value
+        users_balance[str(exp.origin)] += exp.value
     return HttpResponse(str(users_balance))
 
 
