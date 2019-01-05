@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+
+{% block title %} Users {% endblock %}
+
+{% block content %}
+<h2>Liste des groupes</h2>
+
+
+{% if not groups %}
+
+Vous n'êtes actuellement dans aucun groupe
+
+{% else %}
+
+
+<div class="table-responsive">
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+	<td>Nom du groupe</td>
+	<td>Dépenses</td>
+      </tr>
+    </thead>
+    {% for group in groups %}
+    <tr>
+    </tr>	
+    <tr>
+      <td>{{ group.name }}</td>
+      <td>
+	{% if not group.expense_set.all %}
+	<ul> Pas encore de dépense </ul>
+	{% else %}
+	{% for expense in group.expense_set.all %}      
+	<ul> {{ expense }} </ul>
+	{% endfor %}
+	{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+{% endif %}
+{% endblock %}
