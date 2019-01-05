@@ -20,7 +20,16 @@
 
   <body>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-      <ul class="navbar-nav ml-auto">
+      <ul class="navbar-nav">
+	<li class="nav-item dropdown">
+	  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"> {% icon "users" %} Utilisateurs</a>
+	  <ul class="dropdown-menu">
+	    <a class="dropdown-item" href="{% url 'Users:index' %}">Utilisateurs</a>
+	    <a class="dropdown-item" href="#">Groupes</a>
+	  </ul>
+	</li>
+      </ul>
+      <ul class="navbar-nav ml-auto"
 	      <li class="nav-item">
 	{% if request.user.is_authenticated %}
 	<a class="nav-link" href="{% url 'logout' %}">{% icon "sign-out-alt"%} Logout </a>
