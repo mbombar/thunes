@@ -28,7 +28,9 @@ Vous n'êtes actuellement dans aucun groupe
     <tr>
     </tr>	
     <tr>
-      <td>{{ group.name }}</td>
+      <td>
+	<a href="{% url 'MyMoney:balance' group.id %}" class="nav-link"> {{ group.name }}</a>
+      </td>
       <td>
 	{% if not group.expense_set.all %}
 	<ul> Pas encore de dépense </ul>
