@@ -14,6 +14,7 @@ from DjangoTools.decorators import(
 @login_required
 @check_group()
 def show_balance(request, gid):
+    group = Group.objects.get(id=gid)
     users_balance = {}
     group_users = models.User.objects.filter(groups__id = gid)
     for u in group_users:
@@ -24,7 +25,7 @@ def show_balance(request, gid):
         for u in group_users:
             users_balance[str(u)] -= (exp.shares.get(owner=u).value/sum_shares)*exp.value
         users_balance[str(exp.origin)] += exp.value
-    return render(request, "balance.html", {"balance": users_balance})
+    return render(request, "balance.html", {"balance": users_balance, "group": group})
 
 
 @login_required
