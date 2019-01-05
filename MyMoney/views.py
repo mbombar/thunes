@@ -24,7 +24,7 @@ def show_balance(request, gid):
         for u in group_users:
             users_balance[str(u)] -= (exp.shares.get(owner=u).value/sum_shares)*exp.value
         users_balance[str(exp.origin)] += exp.value
-    return HttpResponse(str(users_balance))
+    return render(request, "balance.html", {"balance": users_balance})
 
 
 @login_required

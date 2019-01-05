@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+
+{% block title %} Balance {% endblock %}
+
+{% block content %}
+<h2>Finances du groupe</h2>
+
+<div class="table-responsive">
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+	<td>Utilisateur</td>
+	<td>Solde</td>
+      </tr>
+    </thead>
+    {% for user, solde in balance.items %}
+    <tr>
+    </tr>	
+    <tr>
+      <td>
+	<a href="">{{ user }}</a>
+      </td>
+      <td>
+	{{ solde|floatformat:2 }}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+{% endblock %}
