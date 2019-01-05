@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 import MyMoney.forms as forms
 import MyMoney.models as models
 
-from django.contrib.auth.models import User, Group
+from Users.models import User, Group
 
 from DjangoTools.decorators import(
     check_group,
