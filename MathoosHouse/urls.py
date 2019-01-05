@@ -22,5 +22,6 @@ urlpatterns = [
     path('', auth_views.LoginView.as_view(template_name='index.html')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('money/', include('MyMoney.urls'))
+    path('money/', include('MyMoney.urls')),
+    path('users/', include('Users.urls'))
 ]

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'django_icons',
     'MyMoney',
+    'Users',
 ]
 
 MIDDLEWARE = [
