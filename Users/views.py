@@ -4,16 +4,14 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 
 
-# from .models import (
-#     Groups,
-# )
+from .models import (
+    Group,
+    User,
+)
 
 # from .forms import (
 #     GroupCreateOrEditForm,
 # )
-
-
-User = get_user_model()
 
 # Create your views here.
 
