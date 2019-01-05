@@ -28,6 +28,7 @@ def show_balance(request, gid):
 
 
 @login_required
+@check_group()
 def add_expense(request, gid):
     if request.method == "GET":
         exp_form = forms.ExpenseForm()
@@ -40,15 +41,3 @@ def add_expense(request, gid):
 
     elif request.method == "POST":
         pass
-
-@login_required
-def show_user(request, uid):
-    user = get_user()
-
-@login_required
-def edit_user(request, uid):
-    pass
-
-@login_required
-def edit_group(request, uid):
-    pass
