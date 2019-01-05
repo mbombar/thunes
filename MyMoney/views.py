@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.http import Http404, HttpResponse
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 
 import MyMoney.forms as forms
@@ -8,15 +7,13 @@ import MyMoney.models as models
 
 from django.contrib.auth.models import User, Group
 
-def check_group(user, gid):
-    if not user.groups.filter(id=gid).exists():
-        print(user.groups.filter(id=gid).exists())
-        #raise Http404("{}".format(user.groups.all().values('id')))
-        raise PermissionDenied("You are not in the right group to see this")
+from DjangoTools.decorators import(
+    check_group,
+)
 
 @login_required
+@check_group()
 def show_balance(request, gid):
-    check_group(request.user, gid)
     users_balance = {}
     group_users = models.User.objects.filter(groups__id = gid)
     for u in group_users:
