@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import Http404, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.forms import modelformset_factory, formset_factory
 
 import MyMoney.forms as forms
 import MyMoney.models as models
@@ -12,6 +13,13 @@ from .algo import balance_transactions
 from DjangoTools.decorators import(
     check_group,
 )
+
+from .forms import(
+    ExpenseForm,
+    ShareForm,
+)
+
+
 
 @login_required
 @check_group()
@@ -32,6 +40,34 @@ def show_balance(request, gid):
         "balance": users_balance,
         "group": group,
         "transactions": transactions})
+
+
+
+@login_required
+@check_group()
+def new_expense(request, gid):
+    group = Group.objects.get(id=gid)
+    n = group.user_set.count()
+    if n == 0:
+        raise Exception
+    expense_form = ExpenseForm(request.POST or None)
+    if request.method == "GET":
+        # On crée des parts à 0 pour tous les membres du groupe
+        ShareFormSet = formset_factory(ShareForm, extra=0)
+        initial_share = []
+        for user in group.user_set.all():
+            initial_share.append({'value': 0, 'owner': user})
+        share_formset = ShareFormSet(initial=initial_share)
+
+        return render(request, "expense.html", {
+            "expense_form": expense_form,
+            "share_formset": share_formset,
+            "group": group,
+            }
+        )
+    else:
+        if expense_form.is_valid():
+            expense = expense_form.save(commit=False)
 
 
 @login_required

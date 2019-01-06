@@ -6,11 +6,26 @@ import MyMoney.models as models
 class ShareForm(forms.ModelForm):
     class Meta:
         model = models.Share
-        fields = ["value", "owner"]
+        fields = '__all__'
 
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = models.Expense
-        fields = ["name", "description", "value", "currency"]
-    shares_fields = []
+        fields = '__all__'
+        exclude = ['group',]
     
+
+class ShareForm(forms.ModelForm):
+    # name = forms.CharField()
+    class Meta:
+        model = models.Share
+        fields = [
+            'value',
+            'owner',
+            # 'name',
+            ]
+    def __init__(self, *args, **kwargs):
+        # gid = kwargs.get('gid')
+        super(ShareForm, self).__init__(*args, **kwargs)
+        # self.fields['owner'].queryset = User.objects.filter(groups__id=gid)
+        # self.fields['name'] = str(owner)

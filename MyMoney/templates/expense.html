@@ -1,9 +1,35 @@
+{% extends "base.html" %}
 
-{{ exp.as_p }}
+{% load bootstrap4 %}
+{% load static %}
 
-{% for s in shs %}
 
-<p>Shares :</p>
-{{ s.value }}
-{{ s.owner }}
-{% endfor %}
+{% block title %}Ajouter une dépense{% endblock %}
+
+{% block content %}
+<h2>Ajouter une dépense pour le groupe {{group.name}} </h2>
+
+
+{% bootstrap_form expense_form %}
+
+
+{% bootstrap_formset_errors share_formset %}
+
+<h2> Shares : </h2>
+<div class="row">
+  {% for share in share_formset.forms %}
+  <tr>
+    <!-- <p>Part de {{ share.owner.get_username }} </p> -->
+    <div class="col-xs-12 col-sm-4 col-md-3" style="margin-top:1em">
+      {% bootstrap_form share  %}
+    </div>
+  </tr>
+  {% endfor %}
+</div>
+
+{% buttons %}
+<button type="submit" class="btn btn-primary">Submit</button>
+{% endbuttons %}
+
+
+{% endblock %}
