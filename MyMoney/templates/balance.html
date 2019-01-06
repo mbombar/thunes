@@ -1,33 +1,42 @@
 {% extends "base.html" %}
 
 {% load bootstrap4 %}
-
+{% load icons %}
 {% block title %} Balance {% endblock %}
 
 {% block content %}
 <h2>Finances du groupe {{group.name}}</h2>
 
-<div class="table-responsive">
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <td>Utilisateur</td>
+      <td>Solde</td>
+    </tr>
+  </thead>
+  {% for user, solde in balance.items %}
+    <tr>
+      <td><a href="">{{ user }}</a></td>
+      <td>{{ solde }}</td>
+    </tr>
+  {% endfor %}
+</table>
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-	<td>Utilisateur</td>
-	<td>Solde</td>
-      </tr>
-    </thead>
-    {% for user, solde in balance.items %}
-    <tr>
-    </tr>
-    <tr>
-      <td>
-	<a href="">{{ user }}</a>
-      </td>
-      <td>
-	{{ solde }}
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-  {{ transactions }}
+<h2>Remboursements</h2>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<td>Transaction</td>
+			<td>Montant</td>
+		</tr>
+	</thead>
+	{% for trans in transactions %}
+		<tr>
+			<td><a href="">{{ trans.0 }}</a> {%icon "long-arrow-alt-right" %} <a href="">{{ trans.1 }}</a></td>
+			<td>{{ trans.2 }}</td>
+		</tr>
+	{% endfor %}
+</table>
+
 {% endblock %}
