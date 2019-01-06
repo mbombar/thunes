@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 
@@ -14,6 +15,22 @@ from .models import (
 # )
 
 # Create your views here.
+
+@login_required
+def create_user(request):
+    """Create a new user"""
+    if request.method == 'GET':
+        form = UserCreationForm
+        return render(request, 'users/create_user.html', {'form': form})
+    elif request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("/")
+        else:
+            return render(request, 'users/create_user.html', {'form': form})
+
+
 
 @login_required
 def index_users(request):
