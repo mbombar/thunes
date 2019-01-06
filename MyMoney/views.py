@@ -7,6 +7,8 @@ import MyMoney.models as models
 
 from Users.models import User, Group
 
+from .algo import balance_transactions
+
 from DjangoTools.decorators import(
     check_group,
 )
@@ -21,11 +23,15 @@ def show_balance(request, gid):
         users_balance[str(u)] = 0
     group_expenses = models.Expense.objects.filter(group__id = gid)
     for exp in group_expenses:
-        sum_shares = sum(exp.shares.all().values_list("value", flat=True))
+        sum_shares = sum(exp.share_set.values_list("value", flat=True))
         for u in group_users:
-            users_balance[str(u)] -= (exp.shares.get(owner=u).value/sum_shares)*exp.value
+            users_balance[str(u)] -= round((exp.share_set.get(owner=u).value/sum_shares)*exp.value,2)
         users_balance[str(exp.origin)] += exp.value
-    return render(request, "balance.html", {"balance": users_balance, "group": group})
+    transactions = balance_transactions(users_balance)
+    return render(request, "balance.html", {
+        "balance": users_balance,
+        "group": group,
+        "transactions": transactions})
 
 
 @login_required

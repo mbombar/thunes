@@ -24,10 +24,10 @@
 	<a href="">{{ user }}</a>
       </td>
       <td>
-	{{ solde|floatformat:2 }}
+	{{ solde }}
       </td>
     </tr>
     {% endfor %}
   </table>
-
+  {{ transactions }}
 {% endblock %}
