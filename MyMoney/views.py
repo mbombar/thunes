@@ -57,7 +57,7 @@ def new_expense(request, gid):
         ShareFormSet = formset_factory(ShareForm, extra=0)
         initial_share = []
         for user in group.user_set.all():
-            initial_share.append({'value': 0, 'owner': user})
+            initial_share.append({'value': 1, 'owner': user})
         share_formset = ShareFormSet(initial=initial_share)
 
         return render(request, "expense.html", {
