@@ -39,7 +39,8 @@ def show_balance(request, gid):
     return render(request, "balance.html", {
         "balance": users_balance,
         "group": group,
-        "transactions": transactions})
+        "transactions": transactions,
+        "gid": gid})
 
 
 
