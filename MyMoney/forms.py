@@ -34,7 +34,5 @@ class ShareForm(forms.ModelForm):
             # 'name',
             ]
     def __init__(self, *args, **kwargs):
-        # gid = kwargs.get('gid')
         super(ShareForm, self).__init__(*args, **kwargs)
-        # self.fields['owner'].queryset = User.objects.filter(groups__id=gid)
-        # self.fields['name'] = str(owner)
+        self.fields['owner'].disabled = True
