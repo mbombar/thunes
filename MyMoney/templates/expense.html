@@ -12,7 +12,8 @@
 
 {% bootstrap_form expense_form %}
 
-
+<form class="form" method="post">
+{% csrf_token %}
 {% bootstrap_formset_errors share_formset %}
 
 <h2> Shares : </h2>
@@ -27,9 +28,7 @@
   {% endfor %}
 </div>
 
-{% buttons %}
-<button type="submit" class="btn btn-primary">Submit</button>
-{% endbuttons %}
-
+{% bootstrap_button "Submit" button_type="submit" button_class='btn-success' %}
+</form>
 
 {% endblock %}

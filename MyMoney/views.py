@@ -67,8 +67,10 @@ def new_expense(request, gid):
             }
         )
     else:
-        if expense_form.is_valid():
-            expense = expense_form.save(commit=False)
+        raise ValidationError("'%(path)s'", code='path', params = {'path': "plop"})
+        # return render(request, "succes.html", {})
+        # if expense_form.is_valid():
+        #     expense = expense_form.save(commit=False)
 
 
 @login_required
