@@ -7,6 +7,8 @@
 {% block content %}
 <h2>Liste des groupes</h2>
 
+  <a href="{% url "Users:create_group" %}"> {% bootstrap_button "Créer un groupe" button_type="link" %} </a>
+
 
 {% if not groups %}
 

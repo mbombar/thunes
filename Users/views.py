@@ -4,10 +4,16 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
+from django.core.exceptions import ValidationError
+
 
 from .models import (
     Group,
     User,
+)
+
+from .forms import (
+    GroupCreateOrEditForm,
 )
 
 # from .forms import (
@@ -29,6 +35,28 @@ def create_user(request):
             return redirect("/")
         else:
             return render(request, 'users/create_user.html', {'form': form})
+
+@login_required
+def create_group(request):
+    """Create a new group"""
+    if request.method == 'GET':
+        form = GroupCreateOrEditForm
+        return render(request, 'users/create_group.html', {'form': form})
+    elif request.method == 'POST':
+        form = GroupCreateOrEditForm(request.POST)
+        # raise ValidationError("'%(path)s'", code='path', params = {'path': request.POST})
+        members = request.POST.getlist('members')
+        # raise ValidationError("'%(path)s'", code='path', params = {'path': members})
+        queryset = User.objects.filter(id__in=members)
+        # raise ValidationError("'%(members)s'", code='path', params = {'members': members})
+        if form.is_valid():
+            group = form.save()
+            group.user_set.set(queryset)
+            group.save()
+            # raise ValidationError("'%(path)s'", code='path', params = {'path': request.POST})
+            return redirect("/")
+        else:
+            return render(request, 'users/create_group.html', {'form': form})
 
 
 
