@@ -52,25 +52,24 @@ def new_expense(request, gid):
     if n == 0:
         raise Exception
     expense_form = ExpenseForm(request.POST or None, group = group)
-    if request.method == "GET":
-        # On crée des parts à 0 pour tous les membres du groupe
-        ShareFormSet = formset_factory(ShareForm, extra=0)
-        initial_share = []
-        for user in group.user_set.all():
-            initial_share.append({'value': 1, 'owner': user})
+
+    if expense_form.is_valid():
+        raise ValidationError("'%(path)s'", code='path', params = {'path': "plop"})
+        expense = expense_form.save(commit=False)
+
+    # On crée des parts à 0 pour tous les membres du groupe
+    ShareFormSet = formset_factory(ShareForm, extra=0)
+    initial_share = []
+    for user in group.user_set.all():
+        initial_share.append({'value': 1, 'owner': user})
         share_formset = ShareFormSet(initial=initial_share)
 
-        return render(request, "expense.html", {
-            "expense_form": expense_form,
-            "share_formset": share_formset,
-            "group": group,
-            }
-        )
-    else:
-        raise ValidationError("'%(path)s'", code='path', params = {'path': "plop"})
-        # return render(request, "succes.html", {})
-        # if expense_form.is_valid():
-        #     expense = expense_form.save(commit=False)
+    return render(request, "expense.html", {
+        "expense_form": expense_form,
+        "share_formset": share_formset,
+        "group": group,
+    }
+    )
 
 
 @login_required
