@@ -17,6 +17,8 @@
 {% bootstrap_formset_errors share_formset %}
 
 <h2> Shares : </h2>
+{{ share_formset.management_form }}
+
 <div class="row">
   {% for share in share_formset.forms %}
   <tr>
