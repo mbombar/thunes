@@ -18,6 +18,8 @@ from django.urls import path, include
 
 from django.contrib.auth import views as auth_views
 
+from django.conf import settings
+
 urlpatterns = [
     path('', auth_views.LoginView.as_view(template_name='index.html')),
     path('admin/', admin.site.urls),
@@ -25,3 +27,10 @@ urlpatterns = [
     path('money/', include('MyMoney.urls')),
     path('users/', include('Users.urls'))
 ]
+
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
