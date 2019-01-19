@@ -30,11 +30,11 @@ INTERNAL_IPS = ['10.0.0.5']
 
 ALLOWED_HOSTS = ['*']
 
-# /!\ Je sais pas trop à quoi servent ces variables faut que je lise de la doc
+# LOGIN and LOGOUT redirect urls
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-# Application definition
 
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
