@@ -3,7 +3,7 @@ upstream django {
     }
 
 server {
-    listen 80;	
+    listen 80;
     listen [::]:80;
     server_name thunes thunes.kelvinator.fr thunes.kelvinator.local moria.kelvinator.fr moria.kelvinator.local 10.0.0.4;
     server_tokens off;
@@ -15,8 +15,8 @@ server {
     client_max_body_size    75M;
 
     location /static/ {
-    	     alias /var/www/MathoosHouse/static/;
-	     }
+        alias /var/www/MathoosHouse/static/;
+    }
 
     location / {
         uwsgi_pass  django;
