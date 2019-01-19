@@ -25,6 +25,9 @@ SECRET_KEY = 'zhgn*+b$6&3&gsjn-%nc#uuu386029i1r7$0$q*rzove=1@%*t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# DEBUG mode is only available from INTERNAL_IPS
+INTERNAL_IPS = ['10.0.0.5']
+
 ALLOWED_HOSTS = ['*']
 
 # /!\ Je sais pas trop à quoi servent ces variables faut que je lise de la doc
