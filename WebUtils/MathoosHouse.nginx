@@ -15,9 +15,9 @@ server {
     client_max_body_size    75M;
 
     location /static/ {
-    	     alias /var/www/MathoosHouse/.env/lib/python3.5/site-packages/django/contrib/admin/static/;
+    	     alias /var/www/MathoosHouse/static/;
 	     }
-    
+
     location / {
         uwsgi_pass  django;
 	include /var/www/MathoosHouse/WebUtils/uwsgi_params;
