@@ -1,7 +1,11 @@
-from django.shortcuts import render
+from django.urls import reverse
+from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
+from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory, formset_factory
+
+
 
 import MyMoney.forms as forms
 import MyMoney.models as models
@@ -51,25 +55,54 @@ def new_expense(request, gid):
     n = group.user_set.count()
     if n == 0:
         raise Exception
-    expense_form = ExpenseForm(request.POST or None, group = group)
 
-    if expense_form.is_valid():
-        raise ValidationError("'%(path)s'", code='path', params = {'path': "plop"})
-        expense = expense_form.save(commit=False)
+    # request_post = request.POST.copy()
+    # if request.method == "POST":
+    #     request_post.__setitem__('group', group)
+    #     raise ValidationError("'%(path)s'", code='path', params = {'path': request_post})
+    expense_form = ExpenseForm(request.POST or None, group = group)
+    # raise ValidationError("'%(path)s'", code='path', params = {'path': expense_form.as_table()})
 
     # On crée des parts à 0 pour tous les membres du groupe
     ShareFormSet = formset_factory(ShareForm, extra=0)
-    initial_share = []
-    for user in group.user_set.all():
-        initial_share.append({'value': 1, 'owner': user})
-        share_formset = ShareFormSet(initial=initial_share)
+    share_formset = ShareFormSet(request.POST or None)
 
-    return render(request, "expense.html", {
-        "expense_form": expense_form,
-        "share_formset": share_formset,
-        "group": group,
-    }
-    )
+    if expense_form.is_valid():
+        if share_formset.is_valid():
+            # raise ValidationError("'%(path)s'", code='path', params = {'path': "ShareFormSet est Valide ! "})
+        # else:
+        #     raise ValidationError("'%(path)s'", code='path', params = {'path': share_formset.errors})
+            expense = expense_form.save()
+            # expense.save(commit=False)
+            # raise ValidationError("'%(path)s'", code='path', params = {'path': "expense saved !!!"})
+
+            for share_form in share_formset:
+                # raise ValidationError("'%(path)s'", code='path', params = {'path': "On rentre dans la boucle"})
+
+                share = share_form.save(commit=False)
+                share.expense = expense
+                share.save()
+                # raise ValidationError("'%(path)s'", code='path', params = {'path': "share saved avec l'expense !!!"})
+
+            return redirect(reverse(
+                'MyMoney:balance',
+                kwargs={'gid': gid}
+            ))
+
+
+    # if request.method == "GET":
+    else:
+        initial_share = []
+        for user in group.user_set.all():
+            initial_share.append({'value': 1, 'owner': user})
+            share_formset = ShareFormSet(initial=initial_share)
+
+        return render(request, "expense.html", {
+            "expense_form": expense_form,
+            "share_formset": share_formset,
+            "group": group,
+        }
+        )
 
 
 @login_required

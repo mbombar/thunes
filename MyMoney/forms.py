@@ -16,7 +16,7 @@ class ExpenseForm(forms.ModelForm):
     class Meta:
         model = models.Expense
         fields = '__all__'
-        exclude = ['group',]
+        # exclude = ['group',]
 
     def __init__(self, *args, **kwargs):
         group = kwargs.pop('group', None)
