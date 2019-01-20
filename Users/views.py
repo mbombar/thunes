@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
@@ -54,7 +54,9 @@ def create_group(request):
             group.user_set.set(queryset)
             group.save()
             # raise ValidationError("'%(path)s'", code='path', params = {'path': request.POST})
-            return redirect("/")
+            return redirect(reverse(
+                'Users:groups',
+            ))
         else:
             return render(request, 'users/create_group.html', {'form': form})
 
