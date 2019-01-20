@@ -55,42 +55,38 @@ def new_expense(request, gid):
     n = group.user_set.count()
     if n == 0:
         raise Exception
-
-    # request_post = request.POST.copy()
-    # if request.method == "POST":
-    #     request_post.__setitem__('group', group)
-    #     raise ValidationError("'%(path)s'", code='path', params = {'path': request_post})
-    expense_form = ExpenseForm(request.POST or None, group = group)
-    # raise ValidationError("'%(path)s'", code='path', params = {'path': expense_form.as_table()})
+    expense_form = ExpenseForm(request.POST or None, group=group)
 
     # On crée des parts à 0 pour tous les membres du groupe
     ShareFormSet = formset_factory(ShareForm, extra=0)
     share_formset = ShareFormSet(request.POST or None)
 
+
     if expense_form.is_valid():
         if share_formset.is_valid():
-            # raise ValidationError("'%(path)s'", code='path', params = {'path': "ShareFormSet est Valide ! "})
-        # else:
-        #     raise ValidationError("'%(path)s'", code='path', params = {'path': share_formset.errors})
-            expense = expense_form.save()
-            # expense.save(commit=False)
-            # raise ValidationError("'%(path)s'", code='path', params = {'path': "expense saved !!!"})
+            expense = expense_form.save(commit=False)
+            expense.group = group
+            expense.save()
 
             for share_form in share_formset:
-                # raise ValidationError("'%(path)s'", code='path', params = {'path': "On rentre dans la boucle"})
-
                 share = share_form.save(commit=False)
                 share.expense = expense
                 share.save()
-                # raise ValidationError("'%(path)s'", code='path', params = {'path': "share saved avec l'expense !!!"})
 
             return redirect(reverse(
                 'MyMoney:balance',
                 kwargs={'gid': gid}
             ))
 
+    elif request.method != "GET":
+        return render(request, "expense.html", {
+            "expense_form": expense_form,
+            "share_formset": share_formset,
+            "group": group,
+        })
 
-    # if request.method == "GET":
+
+
     else:
         initial_share = []
         for user in group.user_set.all():

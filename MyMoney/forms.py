@@ -16,13 +16,13 @@ class ExpenseForm(forms.ModelForm):
     class Meta:
         model = models.Expense
         fields = '__all__'
-        # exclude = ['group',]
 
     def __init__(self, *args, **kwargs):
         group = kwargs.pop('group', None)
         super(ExpenseForm, self).__init__(*args, **kwargs)
         self.fields['origin'].queryset = group.user_set.all()
-
+        self.fields['group'].required = False
+        self.fields['group'].widget = forms.HiddenInput()
 
 class ShareForm(forms.ModelForm):
     # name = forms.CharField()
