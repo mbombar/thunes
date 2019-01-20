@@ -10,7 +10,9 @@
 <h2>Ajouter une dépense pour le groupe {{group.name}} </h2>
 
 <form class="form" method="post">
+{% bootstrap_form_errors expense_form %}
 {% bootstrap_form expense_form %}
+
 
 
 {% csrf_token %}
