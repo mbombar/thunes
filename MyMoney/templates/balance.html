@@ -17,7 +17,7 @@
   {% for user, solde in balance.items %}
     <tr>
       <td><a href="">{{ user }}</a></td>
-      <td>{{ solde }}</td>
+      <td>{{ solde|floatformat:2 }}</td>
     </tr>
   {% endfor %}
 </table>
@@ -36,7 +36,7 @@
 	{% for trans in transactions %}
 		<tr>
 			<td><a href="">{{ trans.0 }}</a> {%icon "long-arrow-alt-right" %} <a href="">{{ trans.1 }}</a></td>
-			<td>{{ trans.2 }}</td>
+			<td>{{ trans.2|floatformat:2 }}</td>
 		</tr>
 	{% endfor %}
 </table>

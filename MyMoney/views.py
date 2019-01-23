@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory, formset_factory
 
-
+from fractions import Fraction
 
 import MyMoney.forms as forms
 import MyMoney.models as models
@@ -24,7 +24,6 @@ from .forms import(
 )
 
 
-
 @login_required
 @check_group()
 def show_balance(request, gid):
@@ -37,8 +36,8 @@ def show_balance(request, gid):
     for exp in group_expenses:
         sum_shares = sum(exp.share_set.values_list("value", flat=True))
         for u in group_users:
-            users_balance[str(u)] -= round((exp.share_set.get(owner=u).value/sum_shares)*exp.value,2)
-        users_balance[str(exp.origin)] += exp.value
+            users_balance[str(u)] -= Fraction(int(exp.share_set.get(owner=u).value*100),int(sum_shares*100))*int(exp.value*100)/100
+        users_balance[str(exp.origin)] += Fraction(int(exp.value*100),100)
     transactions = balance_transactions(users_balance)
     return render(request, "balance.html", {
         "balance": users_balance,
