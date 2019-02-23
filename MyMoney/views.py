@@ -121,7 +121,7 @@ def add_expense(request, gid):
 def index_expense(request, gid):
     """Affiche l'historique des dépenses d'un groupe"""
     group = Group.objects.get(id=gid)
-    expenses = models.Expense.objects.filter(group=group)
+    expenses = models.Expense.objects.filter(group=group).order_by('-id')
     return render(request, "index_expenses.html", {
         "expense_list": expenses,
         "group": group,
