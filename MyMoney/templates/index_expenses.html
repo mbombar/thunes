@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+{% load static %}
+
+{% block title %}Historique des dépenses de {% endblock %}
+
+{% block content %}
+<h2>Historique des dépenses de {{group}}</h2>
+<div >
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Nom</th>
+      <th>Emetteur</th>
+      <th>Description</th>
+      <th>Valeur</th>
+      <th>Devise</th>
+      <th>Parts</th>
+    </tr>
+    </thead>
+    {% for expense in expense_list %}
+    <tr>
+      <td>{{ expense.name }}</td>
+      <td>{{ expense.origin }}</td>
+      <td>{{ expense.description }}</td>
+      <td>{{ expense.value }}</td>
+      <td>{{ expense.currency }}</td>
+      <td>{% for share in expense.share_set.all %}
+	<li>{{ share.owner }} : {{ share.value }} </li>
+	{% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

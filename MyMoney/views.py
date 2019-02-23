@@ -114,3 +114,16 @@ def add_expense(request, gid):
 
     elif request.method == "POST":
         pass
+
+
+@login_required
+@check_group()
+def index_expense(request, gid):
+    """Affiche l'historique des dépenses d'un groupe"""
+    group = Group.objects.get(id=gid)
+    expenses = models.Expense.objects.filter(group=group)
+    return render(request, "index_expenses.html", {
+        "expense_list": expenses,
+        "group": group,
+        }
+    )
