@@ -7,6 +7,7 @@
 
 {% block content %}
 <h2>Historique des dépenses de {{group}}</h2>
+<a href="{% url "MyMoney:balance" gid %}"> {% bootstrap_button "Retour au groupe" button_type="link" %} </a>
 <div >
   <table class="table table-striped">
     <thead>

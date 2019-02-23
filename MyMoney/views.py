@@ -125,5 +125,6 @@ def index_expense(request, gid):
     return render(request, "index_expenses.html", {
         "expense_list": expenses,
         "group": group,
+        "gid": gid,
         }
     )
