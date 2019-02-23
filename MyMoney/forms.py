@@ -7,11 +7,6 @@ from django.core.exceptions import ValidationError
 
 # raise ValidationError("'%(path)s'", code='path', params = {'path': self.fields})
 
-# class ShareForm(forms.ModelForm):
-#     class Meta:
-#         model = models.Share
-#         fields = '__all__'
-
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = models.Expense
@@ -25,14 +20,9 @@ class ExpenseForm(forms.ModelForm):
         self.fields['group'].widget = forms.HiddenInput()
 
 class ShareForm(forms.ModelForm):
-    # name = forms.CharField()
     class Meta:
         model = models.Share
         fields = [
             'value',
             'owner',
-            # 'name',
             ]
-    def __init__(self, *args, **kwargs):
-        super(ShareForm, self).__init__(*args, **kwargs)
-        self.fields['owner'].disabled = True
