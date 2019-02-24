@@ -112,3 +112,69 @@ def index_expense(request, gid):
         "gid": gid,
         }
     )
+
+@login_required
+@check_group()
+def rembourser(request, gid, user1, user2):
+    group = Group.objects.get(id=gid)
+    user1 = User.objects.get(username=user1)
+    user2 = User.objects.get(username=user2)
+    n = group.user_set.count()
+    if n == 0:
+        raise Exception
+
+    if request.method == "GET":
+
+        ShareFormSet = formset_factory(ShareForm, extra=0)
+
+
+        initial_expense = {'name': 'Remboursement', 'origin': user1}
+        expense_form = ExpenseForm(group=group, initial=initial_expense)
+
+        # On crée une part à -1 pour l'user2, et à 0 pour le reste
+        initial_share = [{'value': -1, 'owner': user2}]
+
+        for user in group.user_set.exclude(username=user2.username):
+            initial_share.append({'value': 0, 'owner': user})
+
+        share_formset = ShareFormSet(initial=initial_share)
+
+        # raise ValidationError("'%(path)s'", code='path', params = {'path': share_formset})
+
+
+        return render(request, "expense.html", {
+            "expense_form": expense_form,
+            "share_formset": share_formset,
+            "group": group,
+        }
+        )
+
+    else:
+        expense_form = ExpenseForm(request.POST or None, group=group)
+
+        ShareFormSet = formset_factory(ShareForm, extra=0)
+        share_formset = ShareFormSet(request.POST or None)
+
+
+        if expense_form.is_valid():
+            if share_formset.is_valid():
+                expense = expense_form.save(commit=False)
+                expense.group = group
+                expense.save()
+
+                for share_form in share_formset:
+                    share = share_form.save(commit=False)
+                    share.expense = expense
+                    share.save()
+
+                return redirect(reverse(
+                    'MyMoney:balance',
+                    kwargs={'gid': gid}
+                ))
+
+        else:
+            return render(request, "expense.html", {
+                "expense_form": expense_form,
+                "share_formset": share_formset,
+                "group": group,
+            })

@@ -32,6 +32,7 @@
 		<tr>
 			<td>Transaction</td>
 			<td>Montant</td>
+			<td>Action</td>
 		</tr>
 	</thead>
 	{% for trans in transactions %}
@@ -39,6 +40,7 @@
 		<tr>
 			<td><a href="">{{ trans.0 }}</a> {%icon "long-arrow-alt-right" %} <a href="">{{ trans.1 }}</a></td>
 			<td>{{ trans.2|floatformat:2 }}</td>
+			<td><a href="{% url "MyMoney:rembourser" gid trans.0 trans.1 %}"> {% bootstrap_button "Rembourser" button_type="link" %} </a></td>
 		</tr>
 		{% endif %}
 	{% endfor %}
