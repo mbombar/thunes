@@ -32,6 +32,11 @@
       <ul class="navbar-nav ml-auto"
 	      <li class="nav-item">
 		{% if request.user.is_authenticated %}
+		{% if request.user.is_superuser %}
+
+		  <a class='nav-link' href="{% url "Users:create_user" %}"> Créer un utilisateur </a>
+		  {% endif %}
+		
 	      <li class="nav-item">
 		<a class="nav-link" href="#"> Bienvenue {{ user.get_username }} </a>
 	      </li>
