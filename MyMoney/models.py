@@ -21,7 +21,7 @@ class Expense(models.Model):
     description = models.TextField()
     value = models.DecimalField(decimal_places=2, max_digits=10)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
-
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return "{}-{} ({}) {} {}".format(self.group, self.name, self.origin, self.value, self.currency)

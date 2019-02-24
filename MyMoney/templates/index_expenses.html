@@ -12,6 +12,7 @@
   <table class="table table-striped">
     <thead>
     <tr>
+      <th>Date</th>
       <th>Nom</th>
       <th>Emetteur</th>
       <th>Description</th>
@@ -22,6 +23,7 @@
     </thead>
     {% for expense in expense_list %}
     <tr>
+      <td>{{ expense.date }}</td>
       <td>{{ expense.name }}</td>
       <td>{{ expense.origin }}</td>
       <td>{{ expense.description }}</td>
