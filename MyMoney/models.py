@@ -18,7 +18,7 @@ class Expense(models.Model):
     name = models.CharField(max_length=50)
     origin = models.ForeignKey(User, on_delete=models.PROTECT)
     group = models.ForeignKey(Group, on_delete=models.PROTECT)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     value = models.DecimalField(decimal_places=2, max_digits=10)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
     date = models.DateField(auto_now_add=True)
