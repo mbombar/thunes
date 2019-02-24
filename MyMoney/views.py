@@ -102,22 +102,6 @@ def new_expense(request, gid):
 
 @login_required
 @check_group()
-def add_expense(request, gid):
-    if request.method == "GET":
-        exp_form = forms.ExpenseForm()
-        shares_fields = []
-        for u in models.User.objects.filter(groups__id = gid):
-            shares_fields.append(forms.ShareForm(initial={"owner": u}))
-        return render(request, "expense.html", {
-            "exp": exp_form,
-            "shs": shares_fields})
-
-    elif request.method == "POST":
-        pass
-
-
-@login_required
-@check_group()
 def index_expense(request, gid):
     """Affiche l'historique des dépenses d'un groupe"""
     group = Group.objects.get(id=gid)
