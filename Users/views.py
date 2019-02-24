@@ -14,6 +14,7 @@ from .models import (
 
 from .forms import (
     GroupCreateOrEditForm,
+    UserCreationFormWithEmail,
 )
 
 # from .forms import (
@@ -26,12 +27,18 @@ from .forms import (
 def create_user(request):
     """Create a new user"""
     if request.method == 'GET':
-        form = UserCreationForm
+        form = UserCreationFormWithEmail
         return render(request, 'users/create_user.html', {'form': form})
     elif request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = UserCreationFormWithEmail(request.POST)
         if form.is_valid():
+            # raise ValidationError("'%(path)s'", code='path', params = {'path': form['username'].value()})
+            username = form['username'].value()
+            email = form['email'].value()
             form.save()
+            new_user = User.objects.get(username=username)
+            new_user.email = email
+            new_user.save()
             return redirect("/")
         else:
             return render(request, 'users/create_user.html', {'form': form})
