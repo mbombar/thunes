@@ -5,8 +5,6 @@ import MyMoney.models as models
 
 from django.core.exceptions import ValidationError
 
-# raise ValidationError("'%(path)s'", code='path', params = {'path': self.fields})
-
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = models.Expense

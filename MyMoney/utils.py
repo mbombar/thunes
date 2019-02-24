@@ -10,9 +10,7 @@ def add_to_group(user, group):
     """
     group_expenses = models.Expense.objects.filter(group__id=group.id)
     for exp in group_expenses:
-            #raise ValidationError("'%(path)s'", code='path', params = {'path': "oto"})
         new_share = models.Share()
-        #raise ValidationError("'%(path)s'", code='path', params = {'path': new_share})
         new_share.expense = exp
         new_share.owner = user
         new_share.value = 0

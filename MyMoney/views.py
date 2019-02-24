@@ -127,7 +127,6 @@ def rembourser(request, gid, user1, user2):
 
         ShareFormSet = formset_factory(ShareForm, extra=0)
 
-
         initial_expense = {'name': 'Remboursement', 'origin': user1}
         expense_form = ExpenseForm(group=group, initial=initial_expense)
 
@@ -138,9 +137,6 @@ def rembourser(request, gid, user1, user2):
             initial_share.append({'value': 0, 'owner': user})
 
         share_formset = ShareFormSet(initial=initial_share)
-
-        # raise ValidationError("'%(path)s'", code='path', params = {'path': share_formset})
-
 
         return render(request, "expense.html", {
             "expense_form": expense_form,
@@ -154,7 +150,6 @@ def rembourser(request, gid, user1, user2):
 
         ShareFormSet = formset_factory(ShareForm, extra=0)
         share_formset = ShareFormSet(request.POST or None)
-
 
         if expense_form.is_valid():
             if share_formset.is_valid():
