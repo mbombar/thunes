@@ -12,7 +12,7 @@ class ExpenseForm(forms.ModelForm):
         model = models.Expense
         fields = '__all__'
         widgets = {
-            'date': DatePickerInput(format='%d/%m/%Y'),
+            'date': DatePickerInput(format='%m/%d/%Y'),
         }
 
     def __init__(self, *args, **kwargs):
