@@ -18,11 +18,6 @@ from .forms import (
     UserCreationFormWithEmail,
 )
 
-# from .forms import (
-#     GroupCreateOrEditForm,
-# )
-
-# Create your views here.
 
 @login_required
 def create_user(request):
@@ -33,7 +28,6 @@ def create_user(request):
     elif request.method == 'POST':
         form = UserCreationFormWithEmail(request.POST)
         if form.is_valid():
-            # raise ValidationError("'%(path)s'", code='path', params = {'path': form['username'].value()})
             username = form['username'].value()
             email = form['email'].value()
             form.save()
@@ -58,11 +52,8 @@ def create_edit_group(request, gid=None):
             form = GroupCreateOrEditForm(request.POST, instance=get_object_or_404(Group, id=gid))
         else:
             form = GroupCreateOrEditForm(request.POST)
-        # raise ValidationError("'%(path)s'", code='path', params = {'path': request.POST})
         members = request.POST.getlist('members')
-        # raise ValidationError("'%(path)s'", code='path', params = {'path': members})
         queryset = User.objects.filter(id__in=members)
-        # raise ValidationError("'%(members)s'", code='path', params = {'members': members})
         if form.is_valid():
             group = form.save()
             if gid:
@@ -75,7 +66,6 @@ def create_edit_group(request, gid=None):
                     return render(request, 'users/create_group.html', {'form': form})
             group.user_set.set(queryset)
             group.save()
-            # raise ValidationError("'%(path)s'", code='path', params = {'path': request.POST})
             return redirect(reverse(
                 'Users:groups',
             ))
