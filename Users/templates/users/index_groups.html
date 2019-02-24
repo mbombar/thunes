@@ -23,22 +23,22 @@ Vous n'êtes actuellement dans aucun groupe
     <thead>
       <tr>
 	<td>Nom du groupe</td>
-	<td>Dépenses</td>
+	<td>Membres</td>
       </tr>
     </thead>
     {% for group in groups %}
     <tr>
-    </tr>	
+    </tr>
     <tr>
       <td>
 	<a href="{% url 'MyMoney:balance' group.id %}" class="nav-link"> {{ group.name }}</a>
       </td>
       <td>
-	{% if not group.expense_set.all %}
-	<ul> Pas encore de dépense </ul>
+	{% if not group.user_set.all %}
+	<ul> Ce groupe n'a aucun membre </ul>
 	{% else %}
-	{% for expense in group.expense_set.all %}      
-	<ul> {{ expense }} </ul>
+	{% for user in group.user_set.all %}
+	<li> {{ user }} </li>
 	{% endfor %}
 	{% endif %}
       </td>
