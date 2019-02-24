@@ -17,8 +17,8 @@ class UserCreationFormWithEmail(UserCreationForm):
 class GroupCreateOrEditForm(forms.ModelForm):
     """Formulaire de création ou l'édition d'un groupe"""
 
-    members = ModelMultipleChoiceField(queryset = User.objects.all())
+    members = ModelMultipleChoiceField(queryset = User.objects.all(), widget=forms.CheckboxSelectMultiple)
     class Meta:
         model = Group
         fields = ['name',]
-    
+
