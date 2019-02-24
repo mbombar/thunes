@@ -30,6 +30,13 @@ INTERNAL_IPS = ['10.0.0.5']
 
 ALLOWED_HOSTS = ['*']
 
+# Mails settings
+EMAIL_HOST = 'aman.kelvinator.fr'
+SERVER_EMAIL = 'root+thunes@kelvinator.fr'
+DEFAULT_FROM_EMAIL = 'root+thunes@kelvinator.fr'
+EMAIL_PORT = 25
+
+
 # LOGIN and LOGOUT redirect urls
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
