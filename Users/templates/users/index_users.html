@@ -8,6 +8,10 @@
 <h2>Liste des utilisateurs</h2>
 
 
+  {% if request.user.is_superuser %}
+  <a href="{% url "Users:create_user" %}"> {% bootstrap_button "Créer un utilisateur" button_type="link" %} </a>
+  {% endif %}
+
 <div class="table-responsive">
   {% if not users %}
   Il n'y a encore aucun utilisateur
@@ -38,8 +42,5 @@
     </tr>
     {% endfor %}
   </table>
-  {% if request.user.is_superuser %}
-  <a href="{% url "Users:create_user" %}"> {% bootstrap_button "Créer un utilisateur" button_type="link" %} </a>
-  {% endif %}
   
 {% endblock %}
