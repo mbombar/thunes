@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.core.exceptions import ValidationError
 
+from MyMoney.utils import add_to_group
 
 from .models import (
     Group,
@@ -44,13 +45,19 @@ def create_user(request):
             return render(request, 'users/create_user.html', {'form': form})
 
 @login_required
-def create_group(request):
+def create_edit_group(request, gid=None):
     """Create a new group"""
     if request.method == 'GET':
-        form = GroupCreateOrEditForm
+        if gid:
+            form = GroupCreateOrEditForm(instance=get_object_or_404(Group, id=gid))
+        else:
+            form = GroupCreateOrEditForm
         return render(request, 'users/create_group.html', {'form': form})
     elif request.method == 'POST':
-        form = GroupCreateOrEditForm(request.POST)
+        if gid:
+            form = GroupCreateOrEditForm(request.POST, instance=get_object_or_404(Group, id=gid))
+        else:
+            form = GroupCreateOrEditForm(request.POST)
         # raise ValidationError("'%(path)s'", code='path', params = {'path': request.POST})
         members = request.POST.getlist('members')
         # raise ValidationError("'%(path)s'", code='path', params = {'path': members})
@@ -58,6 +65,14 @@ def create_group(request):
         # raise ValidationError("'%(members)s'", code='path', params = {'members': members})
         if form.is_valid():
             group = form.save()
+            if gid:
+                old_members = get_object_or_404(Group, id=gid).user_set.all()
+                if set(old_members) <=  set(queryset):
+                    for u in queryset.difference(old_members):
+                        add_to_group(u, group)
+                else:
+                    form.add_error("members", "Ne retire pas de membres pauvre fou !")
+                    return render(request, 'users/create_group.html', {'form': form})
             group.user_set.set(queryset)
             group.save()
             # raise ValidationError("'%(path)s'", code='path', params = {'path': request.POST})
