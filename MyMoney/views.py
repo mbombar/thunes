@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
@@ -65,6 +66,8 @@ def new_expense(request, gid):
         if share_formset.is_valid():
             expense = expense_form.save(commit=False)
             expense.group = group
+            if not expense.date:
+                expense.date = timezone.now()
             expense.save()
 
             for share_form in share_formset:
@@ -105,7 +108,7 @@ def new_expense(request, gid):
 def index_expense(request, gid):
     """Affiche l'historique des dépenses d'un groupe"""
     group = Group.objects.get(id=gid)
-    expenses = models.Expense.objects.filter(group=group).order_by('-id')
+    expenses = models.Expense.objects.filter(group=group).order_by('-date')
     return render(request, "index_expenses.html", {
         "expense_list": expenses,
         "group": group,

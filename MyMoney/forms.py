@@ -3,12 +3,17 @@ from django.contrib.auth.models import User, Group
 
 import MyMoney.models as models
 
+from bootstrap_datepicker_plus import DatePickerInput
+
 from django.core.exceptions import ValidationError
 
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = models.Expense
         fields = '__all__'
+        widgets = {
+            'date': DatePickerInput(format='%d/%m/%Y'),
+        }
 
     def __init__(self, *args, **kwargs):
         group = kwargs.pop('group', None)

@@ -54,9 +54,15 @@ INSTALLED_APPS = [
 
     'bootstrap4',
     'django_icons',
+    'bootstrap_datepicker_plus',
+
     'MyMoney',
     'Users',
 ]
+
+BOOTSTRAP4 = {
+    'include_jquery': True,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
