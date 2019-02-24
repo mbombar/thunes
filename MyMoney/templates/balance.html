@@ -35,10 +35,12 @@
 		</tr>
 	</thead>
 	{% for trans in transactions %}
+	{% if trans.2 > 0.005 %}
 		<tr>
 			<td><a href="">{{ trans.0 }}</a> {%icon "long-arrow-alt-right" %} <a href="">{{ trans.1 }}</a></td>
 			<td>{{ trans.2|floatformat:2 }}</td>
 		</tr>
+		{% endif %}
 	{% endfor %}
 </table>
 
