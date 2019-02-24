@@ -5,7 +5,7 @@ upstream django {
 server {
     listen 80;
     listen [::]:80;
-    server_name thunes thunes.kelvinator.fr thunes.kelvinator.local moria.kelvinator.fr moria.kelvinator.local 10.0.0.4;
+    server_name _;
     server_tokens off;
 
     keepalive_timeout   70;
