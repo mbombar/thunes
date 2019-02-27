@@ -55,7 +55,9 @@ def new_expense(request, gid):
     n = group.user_set.count()
     if n == 0:
         raise Exception
-    expense_form = ExpenseForm(request.POST or None, group=group)
+    expense_form = ExpenseForm(request.POST or None, group=group,
+                               initial={'origin': request.user,
+                                        'currency' : models.Currency.objects.get(name='Eur')})
 
     # On crée des parts à 0 pour tous les membres du groupe
     ShareFormSet = formset_factory(ShareForm, extra=0)
