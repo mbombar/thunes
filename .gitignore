@@ -3,3 +3,5 @@ __pycache__/
 db.sqlite3
 django
 *.bak
+
+MathoosHouse/settings_local.py
