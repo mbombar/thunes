@@ -23,13 +23,13 @@
     </thead>
     {% for expense in expense_list %}
     <tr>
-      <td>{{ expense.date }}</td>
-      <td>{{ expense.name }}</td>
-      <td>{{ expense.origin }}</td>
-      <td>{{ expense.description }}</td>
-      <td>{{ expense.value }}</td>
-      <td>{{ expense.currency }}</td>
-      <td>{% for share in expense.share_set.all %}
+      <td>{{ expense.0.date }}</td>
+      <td>{{ expense.0.name }}</td>
+      <td>{{ expense.0.origin }}</td>
+      <td>{{ expense.0.description }}</td>
+      <td>{{ expense.0.value }}</td>
+      <td>{{ expense.0.currency }}</td>
+      <td>{% for share in expense.1 %}
 	<li>{{ share.owner }} : {{ share.value }} </li>
 	{% endfor %}
     </tr>

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
-
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
 class Currency(models.Model):
     name = models.CharField(max_length=3)
@@ -29,7 +30,31 @@ class Expense(models.Model):
 class Share(models.Model):
     value = models.DecimalField(decimal_places=2, max_digits=10)
     owner = models.ForeignKey(User, on_delete=models.PROTECT)
-    expense = models.ForeignKey(Expense, on_delete=models.PROTECT)
+
+    # Content type pour avoir des ForeignKeys Polymorphes
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    # Stocke les content_types pour chaque type d'objet qui va utiliser Share
+    _content_types = dict()
+    _content_types[Expense] = ContentType.objects.get_for_model(Expense)
+    _content_types[FavoriteExpense] = ContentType.objects.get_for_model(FavoriteExpense)
 
     def __str__(self):
         return "{} {}".format(self.owner, self.value)
+
+    @staticmethod
+    def get_expense(expense):
+        """
+        Récupère les parts d'une Expense en particulier
+        """
+        return Share.objects.filter(content_type=Share._content_types[Expense], object_id=expense.pk)
+
+    @staticmethod
+    def get_favorite_expense(expense):
+        """
+        Récupère les parts d'une FavoriteExpense en particulier
+        """
+
+        return Share.objects.filter(content_type=Share._content_types[FavoriteExpense], object_id=expense.pk)

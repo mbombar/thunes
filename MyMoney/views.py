@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory, formset_factory
 
@@ -25,6 +26,10 @@ from .forms import(
 )
 
 
+from .models import(
+    Share,
+)
+
 @login_required
 @check_group()
 def show_balance(request, gid):
@@ -35,9 +40,10 @@ def show_balance(request, gid):
         users_balance[str(u)] = 0
     group_expenses = models.Expense.objects.filter(group__id = gid)
     for exp in group_expenses:
-        sum_shares = sum(exp.share_set.values_list("value", flat=True))
+        sum_shares = sum(Share.get_expense(exp).values_list("value", flat=True))
         for u in group_users:
-            users_balance[str(u)] -= Fraction(int(exp.share_set.get(owner=u).value*100),int(sum_shares*100))*int(exp.value*100)/100
+            users_balance[str(u)] -= Fraction(int(Share.get_expense(exp).get(owner=u).value*100),int(sum_shares*100))*int(exp.value*100)/100
+
         users_balance[str(exp.origin)] += Fraction(int(exp.value*100),100)
     transactions = balance_transactions(users_balance)
     return render(request, "balance.html", {
@@ -73,9 +79,12 @@ def new_expense(request, gid):
                 expense.date = timezone.now()
             expense.save()
 
+            expense_content_type = ContentType.objects.get(app_label="MyMoney", model="expense")
+
             for share_form in share_formset:
                 share = share_form.save(commit=False)
-                share.expense = expense
+                share.content_type = expense_content_type
+                share.object_id = expense.pk
                 share.save()
 
             return redirect(reverse(
@@ -112,12 +121,17 @@ def index_expense(request, gid):
     """Affiche l'historique des dépenses d'un groupe"""
     group = Group.objects.get(id=gid)
     expenses = models.Expense.objects.filter(group=group).order_by('-date')
+    expense_list = []
+    for exp in expenses:
+        shares = Share.get_expense(exp)
+        expense_list.append((exp, shares))
     return render(request, "index_expenses.html", {
-        "expense_list": expenses,
+        "expense_list": expense_list,
         "group": group,
         "gid": gid,
         }
     )
+
 
 @login_required
 @check_group()
