@@ -27,15 +27,15 @@ SECRET_KEY = settings_local.SECRET_KEY
 DEBUG = settings_local.DEBUG
 
 # DEBUG mode is only available from INTERNAL_IPS
-INTERNAL_IPS = ['10.0.0.5']
+INTERNAL_IPS = settings_local.INTERNAL_IPS
 
 ALLOWED_HOSTS = ['*']
 
 # Mails settings
-EMAIL_HOST = 'aman.kelvinator.fr'
-SERVER_EMAIL = 'root+thunes@kelvinator.fr'
-DEFAULT_FROM_EMAIL = 'root+thunes@kelvinator.fr'
-EMAIL_PORT = 25
+EMAIL_HOST = settings_local.EMAIL_HOST
+SERVER_EMAIL = settings_local.SERVER_EMAIL
+DEFAULT_FROM_EMAIL = settings_local.DEFAULT_FROM_EMAIL
+EMAIL_PORT = settings_local.EMAIL_PORT
 
 
 # LOGIN and LOGOUT redirect urls
@@ -107,13 +107,7 @@ WSGI_APPLICATION = 'MathoosHouse.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
+DATABASES = settings_local.DATABASES
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

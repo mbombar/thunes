@@ -1,0 +1,35 @@
+
+
+SECRET_KEY = 'vErYsEcReTpAsSwOrD'
+
+DEBUG = False
+
+INTERNAL_IPS = []
+
+EMAIL_HOST = ''
+SERVER_EMAIL = ''
+DEFAULT_FROM_EMAIL = ''
+EMAIL_PORT = 25
+
+OPTIONAL_APPS = []
+
+# Exemple avec postgresql
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'thunes',
+#         'USER': 'thunes',
+#         'PASSWORD': 'verySecretPassword',
+#         'HOST': 'localhost',
+#         'PORT': '5432',  # If you change this setting, be careful during the install.
+#     }
+# }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+

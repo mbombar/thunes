@@ -1,5 +1,5 @@
 upstream django {
-    server unix:///run/uwsgi/app/MathoosHouse/socket;
+    server unix:///var/www/MathoosHouse/WebUtils/MathoosHouse.sock;
     }
 
 server {
