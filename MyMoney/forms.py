@@ -29,3 +29,15 @@ class ShareForm(forms.ModelForm):
             'value',
             'owner',
             ]
+
+class FavoriteExpenseForm(forms.ModelForm):
+    class Meta:
+        model = models.FavoriteExpense
+        exclude = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        group = kwargs.pop('group', None)
+        super(FavoriteExpenseForm, self).__init__(*args, **kwargs)
+        self.fields['origin'].queryset = group.user_set.all()
+        self.fields['group'].required = False
+        self.fields['group'].widget = forms.HiddenInput()

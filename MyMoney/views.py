@@ -22,6 +22,7 @@ from DjangoTools.decorators import(
 from .forms import(
     ExpenseForm,
     ShareForm,
+    FavoriteExpenseForm,
 )
 
 
@@ -118,6 +119,86 @@ def index_expense(request, gid):
         "gid": gid,
         }
     )
+
+@login_required
+@check_group()
+def favorite_expense(request, gid):
+    """Affiche les dépenses favorites d'un groupe"""
+    group = Group.objects.get(id=gid)
+    expenses = models.FavoriteExpense.objects.filter(group=group).order_by('-date')
+    expense_list = []
+    for exp in expenses:
+        shares = Share.get_expense(exp)
+        expense_list.append((exp, shares))
+    return render(request, "index_expenses.html", {
+        "expense_list": expense_list,
+        "group": group,
+        "gid": gid,
+        }
+    )
+
+@login_required
+@check_group()
+def new_favorite_expense(request, gid):
+    group = Group.objects.get(id=gid)
+
+    # raise ValidationError("'%(path)s'", code='path', params = {'path': group})
+
+    n = group.user_set.count()
+    if n == 0:
+        raise Exception
+    currency, _ = models.Currency.objects.get_or_create(name='Eur', defaults={'value_in_eur': 1})
+    expense_form = FavoriteExpenseForm(request.POST or None, group=group,
+                               initial={'origin': request.user,
+                                        'currency' : currency})
+
+    # On crée des parts à 0 pour tous les membres du groupe
+    ShareFormSet = formset_factory(ShareForm, extra=0)
+    share_formset = ShareFormSet(request.POST or None)
+
+
+    if expense_form.is_valid():
+        if share_formset.is_valid():
+            expense = expense_form.save(commit=False)
+            expense.group = group
+            expense.save()
+            
+            favorite_expense_content_type = ContentType.objects.get(app_label="MyMoney", model="favoriteexpense")
+            
+            for share_form in share_formset:
+                share = share_form.save(commit=False)
+                share.content_type = favorite_expense_content_type
+                share.object_id = expense.pk
+                share.save()
+
+            return redirect(reverse(
+                'MyMoney:balance',
+                kwargs={'gid': gid}
+            ))
+
+    elif request.method != "GET":
+        return render(request, "expense.html", {
+            "expense_form": expense_form,
+            "share_formset": share_formset,
+            "group": group,
+        })
+
+
+
+    else:
+        initial_share = []
+        for user in group.user_set.all():
+            initial_share.append({'value': 1, 'owner': user})
+            share_formset = ShareFormSet(initial=initial_share)
+
+        return render(request, "expense.html", {
+            "expense_form": expense_form,
+            "share_formset": share_formset,
+            "group": group,
+        }
+        )
+
+
 
 @login_required
 @check_group()
