@@ -5,3 +5,4 @@ django
 *.bak
 
 MathoosHouse/settings_local.py
+*~
