@@ -2,3 +2,4 @@ django
 django-bootstrap4
 django-icons
 django-bootstrap-datepicker-plus
+psycopg2-binary
