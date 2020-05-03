@@ -25,10 +25,16 @@ pip3 install django-bootstrap-datepicker-plus
 
 Installer les migrations :
 
-```./manage.py migrate```
+```
+./manage.py migrate
+```
 
 
-A présent vous devrez pouvoir lancer le serveur web via un ```./manage.py runserver```
+A présent vous devrez pouvoir lancer le serveur web via un 
+
+```
+./manage.py runserver
+```
 
 Mais on va utiliser un vrai serveur web: nginx + uwsgi
 
