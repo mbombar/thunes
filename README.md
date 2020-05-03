@@ -1,13 +1,27 @@
-Cloner le depot avec le submodule :
+Thunes
+======
+
+# Installation
+
+## Ansible
+
+Voici un rôle Ansible qui déploie une instance de thunes sur un serveur sous Debian, avec une base de données postgresql, un serveur web nginx et uwsgi : https://gitlab.crans.org/bombar/ansible/-/tree/master/roles%2Fthunes
+
+Les variables sont à définir dans le fichier d'inventaire, ou dans les variables d'hôtes.
+Ce rôle ne gère pas la création de la base de données, qui peut très bien être sur un autre serveur. En revanche, il gère toute la configuration de Django : Il suffit de donner l'ip sur serveur de base de données (pouvant être localhost).
+
+## À la main
+
+Cloner le depot :
 
 ```
-git clone --recurse-submodules https://gogs.paulon.org/mikachu/MathoosHouse.git
+git clone https://gitea.servens.org/bombar/MathoosHouse.git
 ```
 
-Installer virtualenv et activer le venv :
+Installer et activer le virtualenv :
 
 ```
-sudo apt install virtualenv
+sudo apt install python3-venv
 cd MathoosHouse
 virtualenv -p python3 .env
 source .env/bin/activate
@@ -16,10 +30,7 @@ source .env/bin/activate
 Installer les dépendances :
 
 ```
-pip3 install django
-pip3 install django-bootstrap4
-pip3 install django-icons
-pip3 install django-bootstrap-datepicker-plus
+pip3 install -r requirements.txt
 ```
 
 
