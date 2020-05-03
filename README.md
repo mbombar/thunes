@@ -1,6 +1,8 @@
 Cloner le depot avec le submodule :
 
-```git clone --recurse-submodules https://gogs.paulon.org/mikachu/MathoosHouse.git```
+```
+git clone --recurse-submodules https://gogs.paulon.org/mikachu/MathoosHouse.git
+```
 
 Installer virtualenv et activer le venv :
 
