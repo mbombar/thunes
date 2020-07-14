@@ -1,3 +1,5 @@
+import requests
+
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import render, redirect
@@ -5,6 +7,7 @@ from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory, formset_factory
+from django.conf import settings
 
 from fractions import Fraction
 
@@ -55,7 +58,7 @@ def new_expense(request, gid):
     n = group.user_set.count()
     if n == 0:
         raise Exception
-    currency, _ = models.Currency.objects.get_or_create(name='Eur', defaults={'value_in_eur': 1})
+    currency, _ = models.Currency.objects.get_or_create(name='Eur', defaults={'value_in_eur': 1, 'symbol': '€'})
     expense_form = ExpenseForm(request.POST or None, group=group,
                                initial={'origin': request.user,
                                         'currency' : currency})
@@ -73,15 +76,31 @@ def new_expense(request, gid):
                 expense.date = timezone.now()
             expense.save()
 
+            fields = []
+
             for share_form in share_formset:
                 share = share_form.save(commit=False)
                 share.expense = expense
+                fields.append({"name": share.owner.username, "value": f"{share.value}{expense.currency.symbol}", "inline": True})
                 share.save()
 
-            return redirect(reverse(
-                'MyMoney:balance',
-                kwargs={'gid': gid}
-            ))
+            group_url = reverse('MyMoney:balance', kwargs={'gid': gid})
+            req = {
+                "embeds": [{
+                    "title": f"{expense.name} ({expense.value}{expense.currency.symbol})",
+                    "author": {"name": f"{expense.origin.username}"},
+                    "description": f"{expense.description}",
+                    "url": f"{settings.BASE_DOMAIN}{group_url}",
+                    "timestamp": f"{expense.date.isoformat()}",
+                    "color": 65331,
+                    "fields": fields
+                }]
+            }
+            from json import dumps
+            print(dumps(req))
+            print(requests.post(settings.DISCORD_WEBHOOK_URL, json=req).content)
+
+            return redirect(group_url)
 
     elif request.method != "GET":
         return render(request, "expense.html", {
@@ -89,8 +108,6 @@ def new_expense(request, gid):
             "share_formset": share_formset,
             "group": group,
         })
-
-
 
     else:
         initial_share = []
