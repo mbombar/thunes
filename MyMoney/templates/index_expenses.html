@@ -28,7 +28,51 @@
 
 
 <h2>Historique des dépenses de {{group}}</h2>
+
 <a href="{% url "MyMoney:balance" gid %}"> {% bootstrap_button "Retour au groupe" button_type="link" %} </a>
+
+<nav>
+  <ul class="pagination justify-content-center">
+
+  {% if page_obj.has_previous %}
+  <li class="page-item">
+    <a class="page-link" href="?page=1">
+      <span>&laquo;</span>
+    </a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+      <span>&lsaquo;</span>
+    </a>
+  </li>
+  {% endif %}
+
+  {% for page in page_obj.paginator.page_range %}
+  {% if page_obj.number <= page|add:3 and page_obj.number >= page|add:-3 %}
+    <li class="page-item {% if page_obj.number == page %}active{% endif %}">
+      <a class="page-link" href="?page={{ page }}">
+	{{ page }}
+      </a>
+    </li>
+  {% endif %}
+  {% endfor %}
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+	<span>&rsaquo;</span>
+      </a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+	<span>&raquo;</span>
+      </a>
+    </li>
+
+    {% endif %}
+  </ul>
+</nav>
+
 <div class="table-responsive">
   <table class="table table-striped">
     <thead>
@@ -42,7 +86,7 @@
     </tr>
     </thead>
     <tbody>
-    {% for expense, total in expense_total %}
+    {% for expense, total in page_obj %}
     <tr>
       <td class="text-nowrap">{{ expense.date }}</td>
       <td><div class="scrollable">{{ expense.name }}</div></td>
@@ -74,4 +118,47 @@
     </tbody>
   </table>
 </div>
+
+<nav>
+  <ul class="pagination justify-content-center">
+
+  {% if page_obj.has_previous %}
+  <li class="page-item">
+    <a class="page-link" href="?page=1">
+      <span>&laquo;</span>
+    </a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+      <span>&lsaquo;</span>
+    </a>
+  </li>
+  {% endif %}
+
+  {% for page in page_obj.paginator.page_range %}
+  {% if page_obj.number <= page|add:3 and page_obj.number >= page|add:-3 %}
+    <li class="page-item {% if page_obj.number == page %}active{% endif %}">
+      <a class="page-link" href="?page={{ page }}">
+	{{ page }}
+      </a>
+    </li>
+  {% endif %}
+  {% endfor %}
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+	<span>&rsaquo;</span>
+      </a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+	<span>&raquo;</span>
+      </a>
+    </li>
+
+    {% endif %}
+  </ul>
+</nav>
+
 {% endblock %}
