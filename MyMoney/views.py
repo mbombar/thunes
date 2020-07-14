@@ -112,8 +112,10 @@ def index_expense(request, gid):
     """Affiche l'historique des dépenses d'un groupe"""
     group = Group.objects.get(id=gid)
     expenses = models.Expense.objects.filter(group=group).order_by('-date')
+    shares = [expense.share_set.all() for expense in expenses]
+    totalshare = [sum([share.value for share in queryset]) for queryset in shares]
     return render(request, "index_expenses.html", {
-        "expense_list": expenses,
+        "expense_total": zip(expenses, totalshare),
         "group": group,
         "gid": gid,
         }

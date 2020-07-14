@@ -2,6 +2,7 @@
 
 {% load bootstrap4 %}
 {% load static %}
+{% load mathfilters %}
 
 {% block title %}Historique des dépenses de {% endblock %}
 
@@ -21,7 +22,7 @@
       <th>Parts</th>
     </tr>
     </thead>
-    {% for expense in expense_list %}
+    {% for expense, total in expense_total %}
     <tr>
       <td>{{ expense.date }}</td>
       <td>{{ expense.name }}</td>
@@ -30,7 +31,7 @@
       <td>{{ expense.value }}</td>
       <td>{{ expense.currency }}</td>
       <td>{% for share in expense.share_set.all %}
-	<li>{{ share.owner }} : {{ share.value }} </li>
+	<li>{{ share.owner }} : {{ expense.value | mul:share.value|div:total}} ({{ share.value }}) </li>
 	{% endfor %}
     </tr>
     {% endfor %}
