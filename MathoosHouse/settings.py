@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'django_icons',
     'bootstrap_datepicker_plus',
+    'mathfilters',
 
     'MyMoney',
     'Users',
