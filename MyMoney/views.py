@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory, formset_factory
 
+from django.core.paginator import Paginator
+
 from fractions import Fraction
 
 import MyMoney.forms as forms
@@ -114,8 +116,14 @@ def index_expense(request, gid):
     expenses = models.Expense.objects.filter(group=group).order_by('-date')
     shares = [expense.share_set.all() for expense in expenses]
     totalshare = [sum([share.value for share in queryset]) for queryset in shares]
+    expense_total = list(zip(expenses, totalshare))
+
+    paginator = Paginator(expense_total, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "index_expenses.html", {
-        "expense_total": zip(expenses, totalshare),
+        "page_obj": page_obj,
         "group": group,
         "gid": gid,
         }
