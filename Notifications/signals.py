@@ -7,6 +7,12 @@ from MyMoney.models import Expense, Share
 import requests
 
 
+# On diffère l'envoi de la notification à la fin de la transaction (s'il y en a une)
+# pour avoir toutes les données correspondantes (sinon par exemple les 'Share' sont 
+# sauvegardées après la 'Expense' dont elles font partie)
+# Lorsque l'on modifie une 'Expense' et qu'on veut une notification, il faut donc bien
+# penser à mettre cette modification dans une transaction atomique avec toutes les
+# modifications de 'Share' (ou autre) liées.
 def discord_notification(sender, **kwargs):
     transaction.on_commit(lambda: _discord_notification(sender, **kwargs))
 
@@ -17,13 +23,20 @@ def _discord_notification(sender, **kwargs):
     if not kwargs.get("created", False):
         return
 
+    # On récupère l'objet qui vient d'être sauvegardé, ainsi que toutes les parts correspondantes
     transaction = kwargs.get("instance", None)
     shares = Share.objects.filter(expense=transaction);
+
+    # Calcul des montants propres des parts
     total = 0
     for share in shares:
         total += share.value
     base_value = transaction.value / total
 
+    # On remplit l'objet json qui indique à Discord comment formatter le message,
+    # cf https://discord.com/developers/docs/resources/webhook#execute-webhook,
+    # https://discord.com/developers/docs/resources/channel#embed-object,
+    # et https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure
     fields = []
     for share in shares:
         if share.value == 0:
@@ -49,4 +62,5 @@ def _discord_notification(sender, **kwargs):
         }]
     }
 
+    # Et on l'envoie, EZ
     requests.post(settings.DISCORD_WEBHOOK_URL, json=req)
