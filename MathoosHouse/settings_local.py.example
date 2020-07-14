@@ -11,7 +11,9 @@ SERVER_EMAIL = ''
 DEFAULT_FROM_EMAIL = ''
 EMAIL_PORT = 25
 
-OPTIONAL_APPS = []
+OPTIONAL_APPS = [
+    #"Notifications.apps.NotificationsConfig",
+]
 
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/<id>/<token>"
 
