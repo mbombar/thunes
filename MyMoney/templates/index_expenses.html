@@ -45,7 +45,7 @@
     {% for expense, total in expense_total %}
     <tr>
       <td class="text-nowrap">{{ expense.date }}</td>
-      <td>{{ expense.name }}</td>
+      <td><div class="scrollable">{{ expense.name }}</div></td>
       <td>{{ expense.origin }}</td>
       <td><div class="scrollable">{{ expense.description }}</div></td>
       <td class="text-nowrap">{{ expense.value }} {{ expense.currency.symbol }}</td>
