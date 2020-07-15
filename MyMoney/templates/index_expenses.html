@@ -47,7 +47,7 @@
       <td class="text-nowrap">{{ expense.date }}</td>
       <td><div class="scrollable">{{ expense.name }}</div></td>
       <td>{{ expense.origin }}</td>
-      <td><div class="scrollable">{{ expense.description }}</div></td>
+      <td><div class="scrollable">{{ expense.description | safe}}</div></td>
       <td class="text-nowrap">{{ expense.value }} {{ expense.currency.symbol }}</td>
       <td class="text-nowrap">
 	<div class="table-responsive">
