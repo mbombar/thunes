@@ -15,8 +15,6 @@ OPTIONAL_APPS = [
     #"Notifications.apps.NotificationsConfig",
 ]
 
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/<id>/<token>"
-
 # Exemple avec postgresql
 #
 # DATABASES = {

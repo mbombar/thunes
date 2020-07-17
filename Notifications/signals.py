@@ -3,12 +3,13 @@ from django.urls import reverse
 from django.db import transaction
 
 from MyMoney.models import Expense, Share
+from .models import DiscordWebhook
 
 import requests
 
 
 # On diffère l'envoi de la notification à la fin de la transaction (s'il y en a une)
-# pour avoir toutes les données correspondantes (sinon par exemple les 'Share' sont 
+# pour avoir toutes les données correspondantes (sinon par exemple les 'Share' sont
 # sauvegardées après la 'Expense' dont elles font partie)
 # Lorsque l'on modifie une 'Expense' et qu'on veut une notification, il faut donc bien
 # penser à mettre cette modification dans une transaction atomique avec toutes les
@@ -62,5 +63,6 @@ def _discord_notification(sender, **kwargs):
         }]
     }
 
-    # Et on l'envoie, EZ
-    requests.post(settings.DISCORD_WEBHOOK_URL, json=req)
+    # Et on l'envoie, à tous les webhook de ce groupe
+    for webhook in DiscordWebhook.objects.filter(group=transaction.group):
+        requests.post(webhook.get_url(), json=req)
