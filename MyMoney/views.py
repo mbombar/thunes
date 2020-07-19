@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory, formset_factory
 from django.db import transaction
+from django.apps import apps
 
 from fractions import Fraction
 
@@ -41,13 +42,23 @@ def show_balance(request, gid):
             users_balance[str(u)] -= Fraction(int(exp.share_set.get(owner=u).value*100),int(sum_shares*100))*int(exp.value*100)/100
         users_balance[str(exp.origin)] += Fraction(int(exp.value*100),100)
     transactions = balance_transactions(users_balance)
-    return render(request, "balance.html", {
+
+    context = {
         "balance": users_balance,
         "group": group,
         "transactions": transactions,
-        "gid": gid})
+        "gid": gid,
+    }
 
+    if apps.is_installed("Notifications"):
+        context["notifications"] = True
+        if request.user.is_staff:
+            from Notifications.models import DiscordWebhook
+            from Notifications.forms import WebhookForm
+            context["hooks"] = DiscordWebhook.objects.filter(group=group)
+            context["hook_form"] = WebhookForm(initial={"group": group})
 
+    return render(request, "balance.html", context)
 
 @login_required
 @check_group()

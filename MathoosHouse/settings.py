@@ -62,9 +62,6 @@ INSTALLED_APPS = [
 
 INSTALLED_APPS += settings_local.OPTIONAL_APPS
 
-# Discord webhook
-DISCORD_WEBHOOK_URL = settings_local.DISCORD_WEBHOOK_URL
-
 BOOTSTRAP4 = {
     'include_jquery': True,
 }
