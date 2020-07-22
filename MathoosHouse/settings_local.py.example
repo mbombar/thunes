@@ -12,7 +12,7 @@ DEFAULT_FROM_EMAIL = ''
 EMAIL_PORT = 25
 
 OPTIONAL_APPS = [
-    #"Notifications.apps.NotificationsConfig",
+    #"Notifications",
 ]
 
 # Exemple avec postgresql
