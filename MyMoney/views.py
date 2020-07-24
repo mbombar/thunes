@@ -5,6 +5,7 @@ from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory, formset_factory
+from django.db.models import Sum
 
 from fractions import Fraction
 
@@ -28,24 +29,35 @@ from .forms import(
 @login_required
 @check_group()
 def show_balance(request, gid):
+
     group = Group.objects.get(id=gid)
+    users = User.objects.filter(groups=group)
+    expenses = models.Expense.objects.filter(group=group)
     users_balance = {}
-    group_users = models.User.objects.filter(groups__id = gid)
-    for u in group_users:
-        users_balance[str(u)] = 0
-    group_expenses = models.Expense.objects.filter(group__id = gid)
-    for exp in group_expenses:
-        sum_shares = sum(exp.share_set.values_list("value", flat=True))
-        for u in group_users:
-            users_balance[str(u)] -= Fraction(int(exp.share_set.get(owner=u).value*100),int(sum_shares*100))*int(exp.value*100)/100
-        users_balance[str(exp.origin)] += Fraction(int(exp.value*100),100)
-    transactions = balance_transactions(users_balance)
-    return render(request, "balance.html", {
+
+    for user in users:
+        users_balance[user.username] = 0
+        # User.username est une clef unique, on peut indexer sans soucis dessus
+
+    for e in expenses:
+        shares = e.share_set
+        value = Fraction(int(e.value * 100), 100)
+        sum_shares = int(shares.aggregate(total=Sum("value")).get("total") * 100)
+
+        users_balance[e.origin.username] += value
+        for user in users:
+            share = shares.filter(owner=user)
+            if share: # Si la share d'un user n'existe pas, elle vaut 0, on ignore
+                share = int(share.get().value * 100)
+                users_balance[user.username] -= value * Fraction(share, sum_shares)
+
+    context = {
         "balance": users_balance,
         "group": group,
-        "transactions": transactions,
-        "gid": gid})
+    }
+    context["transactions"] = balance_transactions(users_balance)
 
+    return render(request, "balance.html", context)
 
 
 @login_required
@@ -64,9 +76,7 @@ def new_expense(request, gid):
     ShareFormSet = formset_factory(ShareForm, extra=0)
     share_formset = ShareFormSet(request.POST or None)
 
-
-    if expense_form.is_valid():
-        if share_formset.is_valid():
+    if expense_form.is_valid() and share_formset.is_valid():
             expense = expense_form.save(commit=False)
             expense.group = group
             if not expense.date:
@@ -89,8 +99,6 @@ def new_expense(request, gid):
             "share_formset": share_formset,
             "group": group,
         })
-
-
 
     else:
         initial_share = []
