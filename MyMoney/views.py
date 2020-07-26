@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.utils import timezone
+from django.core.cache import cache
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
@@ -29,33 +30,44 @@ from .forms import(
 @login_required
 @check_group()
 def show_balance(request, gid):
-
     group = Group.objects.get(id=gid)
-    users = User.objects.filter(groups=group)
-    expenses = models.Expense.objects.filter(group=group)
-    users_balance = {}
 
-    for user in users:
-        users_balance[user.username] = 0
-        # User.username est une clef unique, on peut indexer sans soucis dessus
+    users_balance_key = f"show_balance_{gid}_user_balance"
+    transactions_key  = f"show_balance_{gid}_transactions"
+    users_balance = cache.get(users_balance_key)
+    transactions  = cache.get(transactions_key)
 
-    for e in expenses:
-        shares = e.share_set
-        value = Fraction(int(e.value * 100), 100)
-        sum_shares = int(shares.aggregate(total=Sum("value")).get("total") * 100)
+    if users_balance is None or transactions is None:
+        users = User.objects.filter(groups=group)
+        expenses = models.Expense.objects.filter(group=group)
+        users_balance = {}
 
-        users_balance[e.origin.username] += value
         for user in users:
-            share = shares.filter(owner=user)
-            if share: # Si la share d'un user n'existe pas, elle vaut 0, on ignore
-                share = int(share.get().value * 100)
-                users_balance[user.username] -= value * Fraction(share, sum_shares)
+            users_balance[user.username] = 0
+            # User.username est une clef unique, on peut indexer sans soucis dessus
+
+        for expense in expenses:
+            shares = expense.share_set
+            value = Fraction(int(expense.value * 100), 100)
+            sum_shares = int(shares.aggregate(total=Sum("value")).get("total") * 100)
+
+            users_balance[expense.origin.username] += value
+            for user in users:
+                share = shares.filter(owner=user)
+                if share: # Si la share d'un user n'existe pas, elle vaut 0, on ignore
+                    share = int(share.get().value * 100)
+                    users_balance[user.username] -= value * Fraction(share, sum_shares)
+
+        transactions = balance_transactions(users_balance)
+        cache.set(users_balance_key, users_balance, None)
+        cache.set(transactions_key, transactions, None)
+        # Pas de timeout, on invalide manuellement
 
     context = {
         "balance": users_balance,
         "group": group,
+        "transactions": transactions,
     }
-    context["transactions"] = balance_transactions(users_balance)
 
     return render(request, "balance.html", context)
 
