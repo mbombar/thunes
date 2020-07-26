@@ -1,6 +1,6 @@
 from django.urls import reverse
 from django.utils import timezone
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
@@ -112,6 +112,40 @@ def new_expense(request, gid):
             "group": group,
         }
         )
+
+
+@login_required
+@check_group()
+def edit_expense(request, gid, pk):
+    """Edite une dépense"""
+    group = Group.objects.get(id=gid)
+    expense = get_object_or_404(models.Expense, id=pk)
+    expense_form = ExpenseForm(request.POST or None, group=group, instance=expense)
+    ShareFormSet = modelformset_factory(models.Share, fields=('value', 'owner'), extra=0)
+    share_formset = ShareFormSet(request.POST or None, queryset=expense.share_set.all())
+
+    if expense_form.is_valid() and share_formset.is_valid():
+        expense = expense_form.save(commit=False)
+        expense.group = group
+        if not expense.date:
+            expense.date = timezone.now()
+        expense.save()
+
+        for share_form in share_formset:
+            share = share_form.save(commit=False)
+            share.expense = expense
+            share.save()
+
+        return redirect(reverse(
+            'MyMoney:index-expense',
+            kwargs={'gid': gid}
+        ))
+
+    return render(request, "expense.html", {
+        "expense_form": expense_form,
+        "share_formset": share_formset,
+        "group": group,
+    })
 
 
 @login_required

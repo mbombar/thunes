@@ -39,6 +39,7 @@
       <th>Description</th>
       <th>Valeur</th>
       <th class="text-center">Parts</th>
+      <th/>
     </tr>
     </thead>
     <tbody>
@@ -69,6 +70,8 @@
 	  </table>
 	</div>
       </td>
+      <td><a href="{% url "MyMoney:edit-expense" gid expense.id %}"> {% bootstrap_button "Modifier" button_type="link" button_class="btn-success" %} </a>
+</td>
     </tr>
     {% endfor %}
     </tbody>
