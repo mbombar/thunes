@@ -52,7 +52,10 @@
   {% for hook in hooks %}
   <tr>
     <td>
-      <small><span class="text-muted">https://discord.com/api/webhooks/</span><strong>{{hook.snowflake}}</strong><span class="text-muted">/</span><strong>{{hook.token}}</strong></small>
+      {{ hook.name }}
+    </td>
+    <td>
+      <small><span class="text-muted">https://discord.com/api/webhooks/</span><strong>{{ hook.snowflake }}</strong><span class="text-muted">/</span><strong>{{ hook.token }}</strong></small>
     </td>
     <td>
       <form action="{% url "Notifications:delete" hook.id %}" method="post">

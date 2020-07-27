@@ -14,17 +14,19 @@ class CreateWebhook(View):
         form = WebhookForm(request.POST)
 
         if form.is_valid():
+            name = form.cleaned_data["name"]
             webhook = form.cleaned_data["webhook"]
             group = form.cleaned_data["group"]
 
             if not request.user.groups.filter(id=group.id).exists():
                 raise PermissionDenied("You are not in the right group to see this")
 
-            if not webhook.startswith("https://discord.com/api/webhooks/"):
-                raise Exception # on fait quoi là ?
-
             res = webhook.split("/")
-            DiscordWebhook.objects.create(snowflake=res[-2],
+            if len(res) < 2:
+                raise Exception
+
+            DiscordWebhook.objects.create(name=name,
+                                          snowflake=res[-2],
                                           token=res[-1],
                                           group=group)
 
@@ -35,7 +37,7 @@ class CreateWebhook(View):
 @method_decorator(login_required, name='dispatch')
 class DeleteWebhook(View):
     def post(self, request, webhook_id):
-        hook = DiscordWebhook.objects.get(pk=webhook_id)
+        hook = DiscordWebhook.objects.get(id=webhook_id)
         gid = hook.group.id
         hook.delete()
 
