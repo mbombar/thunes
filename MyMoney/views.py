@@ -26,6 +26,11 @@ from .forms import(
     ShareForm,
 )
 
+if apps.is_installed("Notifications"):
+    from Notifications.models import DiscordWebhook
+    from Notifications.forms import WebhookForm
+    from Notifications.utils import send_notification
+
 
 @login_required
 @check_group()
@@ -53,8 +58,6 @@ def show_balance(request, gid):
     if apps.is_installed("Notifications"):
         context["notifications"] = True
         if request.user.is_staff:
-            from Notifications.models import DiscordWebhook
-            from Notifications.forms import WebhookForm
             context["hooks"] = DiscordWebhook.objects.filter(group=group)
             context["hook_form"] = WebhookForm(initial={"group": group})
 
@@ -90,6 +93,9 @@ def new_expense(request, gid):
                     share = share_form.save(commit=False)
                     share.expense = expense
                     share.save()
+
+                if apps.is_installed("Notifications"):
+                    send_notification(expense)
 
             return redirect(reverse('MyMoney:balance', kwargs={'gid': gid}))
 
