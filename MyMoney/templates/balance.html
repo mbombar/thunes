@@ -14,16 +14,20 @@
       <td>Solde</td>
     </tr>
   </thead>
-  {% for user, solde in balance.items %}
+  {% for username, solde in balance.items %}
     <tr>
-      <td><a href="">{{ user }}</a></td>
-      <td>{{ solde|floatformat:2 }}</td>
+      <td><a href="">{{ username }}</a></td>
+      <td>{{ solde | floatformat:2 }}</td>
     </tr>
   {% endfor %}
 </table>
 
-<a href="{% url "MyMoney:new-expense" gid %}"> {% bootstrap_button "Nouvelle dépense" button_type="link" %} </a>
-<a href="{% url "MyMoney:index-expense" gid %}"> {% bootstrap_button "Historique des dépenses" button_type="link" %} </a>
+<a href="{% url "MyMoney:new-expense" group.id %}">
+  {% bootstrap_button "Nouvelle dépense" button_type="link" %}
+</a>
+<a href="{% url "MyMoney:index-expense" group.id %}">
+  {% bootstrap_button "Historique des dépenses" button_type="link" %}
+</a>
 
 <h2>Remboursements</h2>
 
@@ -38,9 +42,19 @@
   {% for trans in transactions %}
   {% if trans.2 > 0.005 %}
   <tr>
-    <td><a href="">{{ trans.0 }}</a> {%icon "long-arrow-alt-right" %} <a href="">{{ trans.1 }}</a></td>
-    <td>{{ trans.2|floatformat:2 }}</td>
-    <td><a href="{% url "MyMoney:rembourser" gid trans.0 trans.1 %}"> {% bootstrap_button "Rembourser" button_type="link" %} </a></td>
+    <td>
+      <a href="">{{ trans.0 }}</a>
+      {%icon "long-arrow-alt-right" %}
+      <a href="">{{ trans.1 }}</a>
+    </td>
+    <td>
+      {{ trans.2|floatformat:2 }}
+    </td>
+    <td>
+      <a href="{% url "MyMoney:rembourser" group.id trans.0 trans.1 %}">
+        {% bootstrap_button "Rembourser" button_type="link" %}
+      </a>
+    </td>
   </tr>
   {% endif %}
   {% endfor %}

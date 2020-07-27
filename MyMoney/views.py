@@ -1,14 +1,16 @@
+from fractions import Fraction
+
+from django.apps import apps
 from django.urls import reverse
 from django.utils import timezone
-from django.shortcuts import render, redirect
+from django.core.cache import cache
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory, formset_factory
 from django.db import transaction
-from django.apps import apps
-
-from fractions import Fraction
+from django.db.models import Sum
 
 import MyMoney.forms as forms
 import MyMoney.models as models
@@ -36,23 +38,42 @@ if apps.is_installed("Notifications"):
 @check_group()
 def show_balance(request, gid):
     group = Group.objects.get(id=gid)
-    users_balance = {}
-    group_users = models.User.objects.filter(groups__id = gid)
-    for u in group_users:
-        users_balance[str(u)] = 0
-    group_expenses = models.Expense.objects.filter(group__id = gid)
-    for exp in group_expenses:
-        sum_shares = sum(exp.share_set.values_list("value", flat=True))
-        for u in group_users:
-            users_balance[str(u)] -= Fraction(int(exp.share_set.get(owner=u).value*100),int(sum_shares*100))*int(exp.value*100)/100
-        users_balance[str(exp.origin)] += Fraction(int(exp.value*100),100)
-    transactions = balance_transactions(users_balance)
+
+    users_balance_key = f"show_balance_{gid}_user_balance"
+    transactions_key  = f"show_balance_{gid}_transactions"
+    users_balance = cache.get(users_balance_key)
+    transactions  = cache.get(transactions_key)
+
+    if users_balance is None or transactions is None:
+        users = User.objects.filter(groups=group)
+        expenses = models.Expense.objects.filter(group=group)
+        users_balance = {}
+
+        for user in users:
+            users_balance[user.username] = 0
+            # User.username est une clef unique, on peut indexer sans soucis dessus
+
+        for expense in expenses:
+            shares = expense.share_set
+            value = Fraction(int(expense.value * 100), 100)
+            sum_shares = int(shares.aggregate(total=Sum("value")).get("total") * 100)
+
+            users_balance[expense.origin.username] += value
+            for user in users:
+                share = shares.filter(owner=user)
+                if share: # Si la share d'un user n'existe pas, elle vaut 0, on ignore
+                    share = int(share.get().value * 100)
+                    users_balance[user.username] -= value * Fraction(share, sum_shares)
+
+        transactions = balance_transactions(users_balance)
+        cache.set(users_balance_key, users_balance, None)
+        cache.set(transactions_key, transactions, None)
+        # Pas de timeout, on invalide manuellement
 
     context = {
         "balance": users_balance,
         "group": group,
         "transactions": transactions,
-        "gid": gid,
     }
 
     if apps.is_installed("Notifications"):
@@ -79,25 +100,26 @@ def new_expense(request, gid):
     ShareFormSet = formset_factory(ShareForm, extra=0)
     share_formset = ShareFormSet(request.POST or None)
 
+    if expense_form.is_valid() and share_formset.is_valid():
+        with transaction.atomic():
+            expense = expense_form.save(commit=False)
+            expense.group = group
+            if not expense.date:
+                expense.date = timezone.now()
+            expense.save()
 
-    if expense_form.is_valid():
-        if share_formset.is_valid():
-            with transaction.atomic():
-                expense = expense_form.save(commit=False)
-                expense.group = group
-                if not expense.date:
-                    expense.date = timezone.now()
-                expense.save()
+            for share_form in share_formset:
+                share = share_form.save(commit=False)
+                share.expense = expense
+                share.save()
 
-                for share_form in share_formset:
-                    share = share_form.save(commit=False)
-                    share.expense = expense
-                    share.save()
+        if apps.is_installed("Notifications"):
+            send_notification(expense)
 
-                if apps.is_installed("Notifications"):
-                    send_notification(expense)
-
-            return redirect(reverse('MyMoney:balance', kwargs={'gid': gid}))
+        return redirect(reverse(
+            'MyMoney:balance',
+            kwargs={'gid': gid}
+        ))
 
     elif request.method != "GET":
         return render(request, "expense.html", {
@@ -121,12 +143,48 @@ def new_expense(request, gid):
 
 @login_required
 @check_group()
+def edit_expense(request, gid, pk):
+    """Edite une dépense"""
+    group = Group.objects.get(id=gid)
+    expense = get_object_or_404(models.Expense, id=pk)
+    expense_form = ExpenseForm(request.POST or None, group=group, instance=expense)
+    ShareFormSet = modelformset_factory(models.Share, fields=('value', 'owner'), extra=0)
+    share_formset = ShareFormSet(request.POST or None, queryset=expense.share_set.all())
+
+    if expense_form.is_valid() and share_formset.is_valid():
+        expense = expense_form.save(commit=False)
+        expense.group = group
+        if not expense.date:
+            expense.date = timezone.now()
+        expense.save()
+
+        for share_form in share_formset:
+            share = share_form.save(commit=False)
+            share.expense = expense
+            share.save()
+
+        return redirect(reverse(
+            'MyMoney:index-expense',
+            kwargs={'gid': gid}
+        ))
+
+    return render(request, "expense.html", {
+        "expense_form": expense_form,
+        "share_formset": share_formset,
+        "group": group,
+    })
+
+
+@login_required
+@check_group()
 def index_expense(request, gid):
     """Affiche l'historique des dépenses d'un groupe"""
     group = Group.objects.get(id=gid)
     expenses = models.Expense.objects.filter(group=group).order_by('-date')
+    shares = [expense.share_set.all() for expense in expenses]
+    totalshare = [sum([share.value for share in queryset]) for queryset in shares]
     return render(request, "index_expenses.html", {
-        "expense_list": expenses,
+        "expense_total": zip(expenses, totalshare),
         "group": group,
         "gid": gid,
         }

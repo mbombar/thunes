@@ -2,38 +2,79 @@
 
 {% load bootstrap4 %}
 {% load static %}
+{% load mathfilters %}
 
-{% block title %}Historique des dépenses de {% endblock %}
+
+
+
+{% block title %}Historique des dépenses de {{ group }} {% endblock %}
 
 {% block content %}
+
+<style type="text/css">
+  .table-nostriped tbody tr:nth-of-type(odd) {
+      background-color:transparent;
+  }
+
+  div.scrollable {
+      word-wrap: break-word;
+      max-width: 160px;
+      max-height: 160px;
+      margin: 0;
+      padding: 0;
+      overflow: auto;
+  }
+</style>
+
+
 <h2>Historique des dépenses de {{group}}</h2>
 <a href="{% url "MyMoney:balance" gid %}"> {% bootstrap_button "Retour au groupe" button_type="link" %} </a>
-<div >
+<div class="table-responsive">
   <table class="table table-striped">
     <thead>
     <tr>
       <th>Date</th>
-      <th>Nom</th>
+      <th class="text-center">Nom</th>
       <th>Emetteur</th>
       <th>Description</th>
       <th>Valeur</th>
-      <th>Devise</th>
-      <th>Parts</th>
+      <th class="text-center">Parts</th>
+      <th/>
     </tr>
     </thead>
-    {% for expense in expense_list %}
+    <tbody>
+    {% for expense, total in expense_total %}
     <tr>
-      <td>{{ expense.date }}</td>
-      <td>{{ expense.name }}</td>
+      <td class="text-nowrap">{{ expense.date }}</td>
+      <td><div class="scrollable">{{ expense.name }}</div></td>
       <td>{{ expense.origin }}</td>
-      <td>{{ expense.description }}</td>
-      <td>{{ expense.value }}</td>
-      <td>{{ expense.currency }}</td>
-      <td>{% for share in expense.share_set.all %}
-	<li>{{ share.owner }} : {{ share.value }} </li>
-	{% endfor %}
+      <td><div class="scrollable">{{ expense.description | safe}}</div></td>
+      <td class="text-nowrap">{{ expense.value }} {{ expense.currency.symbol }}</td>
+      <td class="text-nowrap">
+	<div class="table-responsive">
+	  <table class="table-borderless table-nostriped">
+	    <tbody>
+	      {% for share in expense.share_set.all %}
+	      <tr>
+		{% if share.value != 0 %}
+		<td>{{ share.owner }}</td>
+		<td class="text-nowrap">
+		  {{ expense.value | mul:share.value|div:total | floatformat:2}}
+		  {{ expense.currency.symbol }}
+		</td>
+		<td>({{ share.value }})</td>
+		{% endif %}
+		{% endfor %}
+	      </tr>
+	    </tbody>
+	  </table>
+	</div>
+      </td>
+      <td><a href="{% url "MyMoney:edit-expense" gid expense.id %}"> {% bootstrap_button "Modifier" button_type="link" button_class="btn-success" %} </a>
+</td>
     </tr>
     {% endfor %}
+    </tbody>
   </table>
 </div>
 {% endblock %}
