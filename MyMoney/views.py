@@ -151,17 +151,26 @@ def edit_expense(request, gid, pk):
     ShareFormSet = modelformset_factory(models.Share, fields=('value', 'owner'), extra=0)
     share_formset = ShareFormSet(request.POST or None, queryset=expense.share_set.all())
 
-    if expense_form.is_valid() and share_formset.is_valid():
-        expense = expense_form.save(commit=False)
-        expense.group = group
-        if not expense.date:
-            expense.date = timezone.now()
-        expense.save()
+    old_value = expense.value
+    old_shares = {}
+    for share in expense.share_set.all():
+        old_shares[share.owner.username] = share.value
 
-        for share_form in share_formset:
-            share = share_form.save(commit=False)
-            share.expense = expense
-            share.save()
+    if expense_form.is_valid() and share_formset.is_valid():
+        with transaction.atomic():
+            expense = expense_form.save(commit=False)
+            expense.group = group
+            if not expense.date:
+                expense.date = timezone.now()
+            expense.save()
+
+            for share_form in share_formset:
+                share = share_form.save(commit=False)
+                share.expense = expense
+                share.save()
+
+        send_notification(expense, change=True,
+                          old_shares=old_shares, old_value=old_value)
 
         return redirect(reverse(
             'MyMoney:index-expense',

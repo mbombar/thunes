@@ -25,18 +25,18 @@ def send_notification(transaction, change=False, **kwargs):
     fields = []
     for share in shares:
         share_amount = base_value * share.value
-        old_amount = base_value * old_shares.get(share.owner.username, 0)
-        if change and share_amount != old_amount:
+        old_share = old_shares.get(share.owner.username, 0)
+
+        display_value = f"{share.value}"
+        if change and share.value != old_share:
             # On fait le diff si c'est un changement
-            value = f"~~{old_amount}{symbol}~~ → {share_amount:.2f}{symbol}"
-        elif share.value != 0:
-            value = f"{share_amount:.2f}{symbol}"
-        else:
-            continue # Do not display empty shares
-        value += f" ({share.value})"
+            display_value = f"~~{old_share}~~ → " + display_value
+        elif share.value == 0:
+            continue # On cache les parts nulle (sauf si elles ont changés)
+        display_value = f"{share_amount:.2f}{symbol} ({display_value})"
         fields.append({
-            "name": f"{share.owner.username}",
-            "value": value,
+            "name": share.owner.username,
+            "value": display_value,
             "inline": True
         })
 
@@ -45,22 +45,24 @@ def send_notification(transaction, change=False, **kwargs):
 
     title = f"{transaction.value}{symbol}"
     if change:
-        message = "Modification"
+        message = "Modification d'une dépense"
+        color = "16763648"
         if transaction.value != old_value:
-            title = "~~{old_value}{symbol}~~ → " + title
+            title = f"~~{old_value}{symbol}~~ → " + title
     else:
-        message = "Création"
+        message = "Nouvelle dépense"
+        color = "65331"
     title = f"{transaction.name}: " + title
 
     req = {
-        "content": f"{message} d'une dépense",
+        "content": message,
         "embeds": [{
             "title": title,
-            "author": {"name": f"{transaction.origin.username}"},
-            "description": f"{transaction.description}",
+            "author": { "name": transaction.origin.username },
+            "description": transaction.description,
             "url": group_url,
-            "timestamp": f"{transaction.date.isoformat()}",
-            "color": 65331,
+            "timestamp": transaction.date.isoformat(),
+            "color": color,
             "fields": fields
         }]
     }
