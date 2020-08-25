@@ -92,7 +92,9 @@
 <script>
   $(document).ready( function () {
       $.fn.dataTable.moment('DD MMMM YYYY', 'fr');
-      $('#1').DataTable();
+      $('#1').DataTable({
+	  stateSave: true
+      } );
   } );
 </script>
 {% endblock %}
