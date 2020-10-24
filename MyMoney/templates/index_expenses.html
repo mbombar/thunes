@@ -93,7 +93,8 @@
   $(document).ready( function () {
       $.fn.dataTable.moment('DD MMMM YYYY', 'fr');
       $('#1').DataTable({
-	  stateSave: true
+	  stateSave: true,
+	  "order": [[ 0, "desc" ]]
       } );
   } );
 </script>
