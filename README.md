@@ -18,6 +18,11 @@ Cloner le depot :
 git clone https://gitea.servens.org/bombar/MathoosHouse.git
 ```
 
+Installer les dépendances apt
+```
+apt install memcached
+```
+
 Installer et activer le virtualenv :
 
 ```
