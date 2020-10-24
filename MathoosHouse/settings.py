@@ -109,6 +109,7 @@ WSGI_APPLICATION = 'MathoosHouse.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = settings_local.DATABASES
+CACHES = settings_local.CACHES
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
