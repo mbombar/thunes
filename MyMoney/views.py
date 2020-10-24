@@ -165,9 +165,20 @@ def edit_expense(request, gid, pk):
 def index_expense(request, gid):
     """Affiche l'historique des dépenses d'un groupe"""
     group = Group.objects.get(id=gid)
-    expenses = models.Expense.objects.filter(group=group).order_by('-date')
-    shares = [expense.share_set.all() for expense in expenses]
-    totalshare = [sum([share.value for share in queryset]) for queryset in shares]
+    expenses_key   = f"index_expense_{gid}_expenses"
+    totalshare_key = f"index_expense_{gid}_totalshare"
+
+    expenses = cache.get(expenses_key)
+    totalshare = cache.get(totalshare_key)
+
+    if expenses is None or totalshare is None:
+        expenses = models.Expense.objects.filter(group=group)
+        shares = [expense.share_set.all() for expense in expenses]
+        totalshare = [sum([share.value for share in queryset]) for queryset in shares]
+
+        cache.set(expenses_key, expenses, None)
+        cache.set(totalshare_key, totalshare, None)
+
     return render(request, "index_expenses.html", {
         "expense_total": zip(expenses, totalshare),
         "group": group,
