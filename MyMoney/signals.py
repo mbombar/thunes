@@ -18,6 +18,10 @@ def invalidate_cache_on_update(sender, **kwargs):
 
         users_balance_key = f"show_balance_{gid}_user_balance"
         transactions_key  = f"show_balance_{gid}_transactions"
+        expenses_key      = f"index_expense_{gid}_expenses"
+        totalshare_key    = f"index_expense_{gid}_totalshare"
 
         users_balance = cache.delete(users_balance_key)
         transactions  = cache.delete(transactions_key)
+        expenses      = cache.delete(expenses_key)
+        totalshare    = cache.delete(totalshare_key)
