@@ -26,6 +26,12 @@ class Expense(models.Model):
     def __str__(self):
         return "{}-{} ({}) {} {}".format(self.group, self.name, self.origin, self.value, self.currency)
 
+    def delete(self, *args, **kwargs):
+        shares = self.share_set.all()
+        for share in shares:
+            share.delete()
+        super().delete(*args, **kwargs)
+
 class Share(models.Model):
     value = models.DecimalField(decimal_places=2, max_digits=10)
     owner = models.ForeignKey(User, on_delete=models.PROTECT)

@@ -69,8 +69,12 @@
 	  </table>
 	</div>
       </td>
-      <td><a href="{% url "MyMoney:edit-expense" gid expense.id %}"> {% bootstrap_button "Modifier" button_type="link" button_class="btn-success" %} </a>
-</td>
+      <td>
+	<a href="{% url "MyMoney:edit-expense" gid expense.id %}"> {% bootstrap_button "Modifier" button_type="link" button_class="btn-success btn-block" %}
+	</a>
+	<a href="{% url "MyMoney:delete-expense" gid expense.id %}"> {% bootstrap_button "Supprimer" button_type="link" button_class="btn-danger btn-block" %}
+	</a>
+      </td>
     </tr>
     {% endfor %}
     </tbody>
