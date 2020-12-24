@@ -162,6 +162,20 @@ def edit_expense(request, gid, pk):
 
 @login_required
 @check_group()
+def delete_expense(request, gid, pk):
+    """Supprime une dépense"""
+    expense = get_object_or_404(models.Expense, id=pk)
+    expense.delete()
+
+    return redirect(reverse(
+        'MyMoney:index-expense',
+        kwargs={'gid': gid}
+    ))
+
+
+
+@login_required
+@check_group()
 def index_expense(request, gid):
     """Affiche l'historique des dépenses d'un groupe"""
     group = Group.objects.get(id=gid)
