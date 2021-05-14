@@ -4,5 +4,9 @@ db.sqlite3
 django
 *.bak
 
-MathoosHouse/settings_local.py
+Thunes/settings_local.py
 *~
+
+!static/
+static/*
+!static/development.png

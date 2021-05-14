@@ -1,7 +1,7 @@
 [uwsgi]
 plugin	        =       python3
-chdir           =       /var/www/MathoosHouse/
-module          =       MathoosHouse.wsgi
+chdir           =       /var/www/Thunes/
+module          =       Thunes.wsgi
 
 uid             =       www-data
 gid             =       www-data
@@ -10,8 +10,8 @@ gid             =       www-data
 master          =       true
 processes       =       4
 
-socket          =       /var/www/MathoosHouse/WebUtils/MathoosHouse.sock
+socket          =       /var/www/Thunes/WebUtils/Thunes.sock
 chmod-socket	=       777
 
-home            =       /var/www/MathoosHouse/.env
+home            =       /var/www/Thunes/.env
 vacuum          =       true

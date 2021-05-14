@@ -1,5 +1,5 @@
 upstream django {
-    server unix:///var/www/MathoosHouse/WebUtils/MathoosHouse.sock;
+    server unix:///var/www/Thunes/WebUtils/Thunes.sock;
     }
 
 server {
@@ -15,11 +15,11 @@ server {
     client_max_body_size    75M;
 
     location /static/ {
-        alias /var/www/MathoosHouse/static/;
+        alias /var/www/Thunes/static/;
     }
 
     location / {
         uwsgi_pass  django;
-	include /var/www/MathoosHouse/WebUtils/uwsgi_params;
+	include /var/www/Thunes/WebUtils/uwsgi_params;
     }
 }
