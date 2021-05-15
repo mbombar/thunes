@@ -16,6 +16,8 @@ from . import settings_local
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Base domain to craft absolute urls
+BASE_DOMAIN = settings_local.BASE_DOMAIN
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -36,7 +38,6 @@ EMAIL_HOST = settings_local.EMAIL_HOST
 SERVER_EMAIL = settings_local.SERVER_EMAIL
 DEFAULT_FROM_EMAIL = settings_local.DEFAULT_FROM_EMAIL
 EMAIL_PORT = settings_local.EMAIL_PORT
-
 
 # LOGIN and LOGOUT redirect urls
 LOGIN_REDIRECT_URL = '/'

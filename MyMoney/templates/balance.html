@@ -60,4 +60,30 @@
   {% endfor %}
 </table>
 
+{% if notifications %}
+<h2>Notifications</h2>
+<table class="table table-striped">
+  {% for hook in hooks %}
+  <tr>
+    <td>
+      {{ hook.name }}
+    </td>
+    <td>
+      <small><span class="text-muted">https://discord.com/api/webhooks/</span><strong>{{ hook.snowflake }}</strong><span class="text-muted">/</span><strong>{{ hook.token }}</strong></small>
+    </td>
+    <td>
+      <form action="{% url "Notifications:delete" hook.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="Supprimer" class="btn btn-danger"></input>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<form action="{% url "Notifications:create" %}" method="post">
+  {% csrf_token %}
+  {% bootstrap_form hook_form layout="horizontal" %}
+  <input type="submit" value="Nouveau" class="btn btn-primary"></input>
+</form>
+{% endif %}
 {% endblock %}

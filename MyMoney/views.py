@@ -1,3 +1,6 @@
+from fractions import Fraction
+
+from django.apps import apps
 from django.urls import reverse
 from django.utils import timezone
 from django.core.cache import cache
@@ -6,9 +9,8 @@ from django.http import Http404, HttpResponse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.forms import modelformset_factory, formset_factory
+from django.db import transaction
 from django.db.models import Sum
-
-from fractions import Fraction
 
 import MyMoney.forms as forms
 import MyMoney.models as models
@@ -25,6 +27,11 @@ from .forms import(
     ExpenseForm,
     ShareForm,
 )
+
+if apps.is_installed("Notifications"):
+    from Notifications.models import DiscordWebhook
+    from Notifications.forms import WebhookForm
+    from Notifications.utils import send_notification
 
 
 @login_required
@@ -69,8 +76,13 @@ def show_balance(request, gid):
         "transactions": transactions,
     }
 
-    return render(request, "balance.html", context)
+    if apps.is_installed("Notifications"):
+        context["notifications"] = True
+        if request.user.is_staff:
+            context["hooks"] = DiscordWebhook.objects.filter(group=group)
+            context["hook_form"] = WebhookForm(initial={"group": group})
 
+    return render(request, "balance.html", context)
 
 @login_required
 @check_group()
@@ -79,7 +91,7 @@ def new_expense(request, gid):
     n = group.user_set.count()
     if n == 0:
         raise Exception
-    currency, _ = models.Currency.objects.get_or_create(name='Eur', defaults={'value_in_eur': 1})
+    currency, _ = models.Currency.objects.get_or_create(name='Eur', defaults={'value_in_eur': 1, 'symbol': '€'})
     expense_form = ExpenseForm(request.POST or None, group=group,
                                initial={'origin': request.user,
                                         'currency' : currency})
@@ -89,6 +101,7 @@ def new_expense(request, gid):
     share_formset = ShareFormSet(request.POST or None)
 
     if expense_form.is_valid() and share_formset.is_valid():
+        with transaction.atomic():
             expense = expense_form.save(commit=False)
             expense.group = group
             if not expense.date:
@@ -100,10 +113,13 @@ def new_expense(request, gid):
                 share.expense = expense
                 share.save()
 
-            return redirect(reverse(
-                'MyMoney:balance',
-                kwargs={'gid': gid}
-            ))
+        if apps.is_installed("Notifications"):
+            send_notification(expense)
+
+        return redirect(reverse(
+            'MyMoney:balance',
+            kwargs={'gid': gid}
+        ))
 
     elif request.method != "GET":
         return render(request, "expense.html", {
@@ -122,8 +138,7 @@ def new_expense(request, gid):
             "expense_form": expense_form,
             "share_formset": share_formset,
             "group": group,
-        }
-        )
+        })
 
 
 @login_required
@@ -136,17 +151,26 @@ def edit_expense(request, gid, pk):
     ShareFormSet = modelformset_factory(models.Share, fields=('value', 'owner'), extra=0)
     share_formset = ShareFormSet(request.POST or None, queryset=expense.share_set.all())
 
-    if expense_form.is_valid() and share_formset.is_valid():
-        expense = expense_form.save(commit=False)
-        expense.group = group
-        if not expense.date:
-            expense.date = timezone.now()
-        expense.save()
+    old_value = expense.value
+    old_shares = {}
+    for share in expense.share_set.all():
+        old_shares[share.owner.username] = share.value
 
-        for share_form in share_formset:
-            share = share_form.save(commit=False)
-            share.expense = expense
-            share.save()
+    if expense_form.is_valid() and share_formset.is_valid():
+        with transaction.atomic():
+            expense = expense_form.save(commit=False)
+            expense.group = group
+            if not expense.date:
+                expense.date = timezone.now()
+            expense.save()
+
+            for share_form in share_formset:
+                share = share_form.save(commit=False)
+                share.expense = expense
+                share.save()
+
+        send_notification(expense, change=True,
+                          old_shares=old_shares, old_value=old_value)
 
         return redirect(reverse(
             'MyMoney:index-expense',
