@@ -15,7 +15,7 @@ Ce rôle ne gère pas la création de la base de données, qui peut très bien �
 Cloner le depot :
 
 ```
-git clone https://gitea.servens.org/bombar/Thunes.git
+git clone https://gitlab.crans.org/bombar/thunes.git
 ```
 
 Installer les dépendances apt
@@ -28,7 +28,7 @@ Installer et activer le virtualenv :
 ```
 sudo apt install python3-venv
 cd Thunes
-virtualenv -p python3 .env
+python3 -m venv --system-site-packages .env
 source .env/bin/activate
 ```
 
@@ -58,15 +58,15 @@ Mais on va utiliser un vrai serveur web: nginx + uwsgi
 sudo apt install nginx uwsgi uwsgi-plugin-python3
 
 cd /etc/nginx/sites-available/
-sudo ln -s /var/www/Thunes/WebUtils/Thunes.nginx ./
+sudo ln -s /var/www/Thunes/WebUtils/thunes.nginx.example ./thunes.nginx
 cd ../sites-enabled/
-sudo ln -s ../sites-available/Thunes .
+sudo ln -s ../sites-available/thunes.nginx .
 rm default ## ça c'est parce que le serveur web écoute tout le monde
 
 cd /etc/uwsgi/apps-available/
-sudo ln -s /var/www/Thunes/WebUtils/Thunes.uwsgi ./
+sudo ln -s /var/www/Thunes/WebUtils/thunes.ini.example ./thunes.ini
 cd ../apps-enabled/
-sudo ln -s ../apps-available/Thunes ./Thunes.ini
+sudo ln -s ../apps-available/thunes.ini ./thunes.ini
 sudo chown -R www-data /var/www/Thunes/
 ```
 
