@@ -76,11 +76,12 @@ def show_balance(request, gid):
         "transactions": transactions,
     }
 
-    if apps.is_installed("Notifications"):
+    if apps.is_installed("Notifications") and request.user.is_staff:
         context["notifications"] = True
-        if request.user.is_staff:
-            context["hooks"] = DiscordWebhook.objects.filter(group=group)
-            context["hook_form"] = WebhookForm(initial={"group": group})
+        context["hooks"] = DiscordWebhook.objects.filter(group=group)
+        context["hook_form"] = WebhookForm(initial={"group": group})
+    else:
+        context["notifications"] = False
 
     return render(request, "balance.html", context)
 
