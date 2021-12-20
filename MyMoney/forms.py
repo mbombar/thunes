@@ -29,6 +29,3 @@ class ShareForm(forms.ModelForm):
             'value',
             'owner',
             ]
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['owner'].widget.attrs['readonly'] = True
