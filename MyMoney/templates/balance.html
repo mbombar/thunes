@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% load bootstrap4 %}
-{% load icons %}
+{% load bootstrap_icons %}
 {% block title %} Balance {% endblock %}
 
 {% block content %}
@@ -44,7 +44,7 @@
   <tr>
     <td>
       <a href="">{{ trans.0 }}</a>
-      {%icon "long-arrow-alt-right" %}
+      {% bs_icon 'arrow-right' %}
       <a href="">{{ trans.1 }}</a>
     </td>
     <td>

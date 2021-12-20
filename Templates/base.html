@@ -2,7 +2,7 @@
 
 {# Load the tag library #}
 {% load bootstrap4 %}
-{% load icons %}
+{% load bootstrap_icons %}
 
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
@@ -37,7 +37,7 @@
       {% if request.user.is_authenticated %}
       <ul class="navbar-nav">
 	<li class="nav-item dropdown">
-	  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"> {% icon "users" %} Utilisateurs</a>
+	  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"> {% bs_icon "people-fill" %} Utilisateurs</a>
 	  <ul class="dropdown-menu">
 	    <a class="dropdown-item" href="{% url 'Users:users' %}">Utilisateurs</a>
 	    <a class="dropdown-item" href="{% url 'Users:groups' %}">Groupes</a>
@@ -56,9 +56,9 @@
 	      <li class="nav-item">
 		<a class="nav-link" href="#"> Bienvenue {{ user.get_username }} </a>
 	      </li>
-		<a class="nav-link" href="{% url 'logout' %}">{% icon "sign-out-alt"%} Logout </a>
+		<a class="nav-link" href="{% url 'logout' %}">{% bs_icon "box-arrow-right"%} Logout </a>
 		{% else %}
-		<a class="nav-link" href="{% url 'login' %}">{% icon "sign-in-alt" %} Login </a>
+		<a class="nav-link" href="{% url 'login' %}">{% bs_icon "box-arrow-left" %} Login </a>
 		{% endif %}
 	      </li>
       </ul>

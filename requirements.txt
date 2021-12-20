@@ -1,6 +1,6 @@
 django
 django-bootstrap4
-django-icons
+django-bootstrap-icons
 django-bootstrap-datepicker-plus
 django-mathfilters
 psycopg2-binary

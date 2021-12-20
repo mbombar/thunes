@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'bootstrap4',
-    'django_icons',
+    'django_bootstrap_icons',
     'bootstrap_datepicker_plus',
     'mathfilters',
 
