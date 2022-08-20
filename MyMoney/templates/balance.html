@@ -17,7 +17,7 @@
   {% for username, solde in balance.items %}
     <tr>
       <td><a href="">{{ username }}</a></td>
-      <td>{{ solde | floatformat:2 }}</td>
+      <td>{{ solde | floatformat:2 }} €</td>
     </tr>
   {% endfor %}
 </table>
@@ -48,7 +48,7 @@
       <a href="">{{ trans.1 }}</a>
     </td>
     <td>
-      {{ trans.2|floatformat:2 }}
+      {{ trans.2|floatformat:2 }} €
     </td>
     <td>
       <a href="{% url "MyMoney:rembourser" group.id trans.0 trans.1 %}">
