@@ -55,7 +55,7 @@ def show_balance(request, gid):
 
         for expense in expenses:
             shares = expense.share_set
-            value = Fraction(int(expense.value * 100), 100)
+            value = Fraction(int(expense.value*expense.currency.value_in_eur * 100), 100)
             sum_shares = int(shares.aggregate(total=Sum("value")).get("total") * 100)
 
             users_balance[expense.origin.username] += value
