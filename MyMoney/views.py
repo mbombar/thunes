@@ -211,7 +211,7 @@ def index_expense(request, gid):
     totalshare = cache.get(totalshare_key)
 
     if expenses is None or totalshare is None:
-        expenses = models.Expense.objects.filter(group=group)
+        expenses = models.Expense.objects.filter(group=group).order_by("-date", "-id")
         shares = [expense.share_set.all() for expense in expenses]
         totalshare = [sum([share.value for share in queryset]) for queryset in shares]
 
