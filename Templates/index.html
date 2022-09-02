@@ -4,6 +4,29 @@
 
 {% block content %}
 <h2>Bienvenue sur l'app de Thunes !!</h2>
+
+
+{% if user.is_staff %}
 <p>Pour la gestion, voir la page d'<a href="{% url 'admin:index' %}">Administration</a> </p>
+{% endif %}
+
+
+{% if request.user.is_anonymous and not user.is_authenticated %}
+Pour s'authentifier, cliquer <a href="{% url 'login' %}">ici</a>.
+
+{% else %}
+
+{% if user.expense_set %}
+
+{% with group=user.expense_set.last.group %}
+{% if group %}
+<br><br><br><br><br><br>
+<h4>Dernier groupe utilisé:</h4>
+<a href="{% url 'MyMoney:balance' group.id %}" class="nav-link"> {{ group.name }}</a>
+{% endif %}
+{% endwith %}
+{% endif %}
+
+{% endif %}
 
 {% endblock %}
