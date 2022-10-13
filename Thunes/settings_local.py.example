@@ -28,6 +28,9 @@ OPTIONAL_APPS = [
 #     }
 # }
 
+# I don't have a better idea right now, we should change the way we set databases settings but maybe later, for now this just works
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
