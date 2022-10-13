@@ -26,8 +26,11 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('money/', include('MyMoney.urls')),
     path('users/', include('Users.urls')),
-    path('webhooks/', include('Notifications.urls')),
 ]
+
+if "Notifications" in settings.INSTALLED_APPS:
+    urlpatterns.append(path('webhooks/', include('Notifications.urls')))
+
 
 
 if settings.DEBUG and 'debug_toolbar' in settings.INSTALLED_APPS:
