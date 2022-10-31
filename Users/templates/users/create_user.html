@@ -5,13 +5,13 @@
 {% block title %} Users {% endblock %}
 
 {% block content %}
-
-<form action="" method="post" class="form">
-  {% csrf_token %}
-  {% bootstrap_form form %}
-  {% buttons %}
+<div class="container">
+  <form action="" method="post" class="form">
+    {% csrf_token %}
+    {% bootstrap_form form layout='inline' %}
+    {% buttons %}
     <button type="submit" class="btn btn-primary">Submit</button>
-  {% endbuttons %}
-</form>
-
+    {% endbuttons %}
+  </form>
+</div>
 {% endblock %}

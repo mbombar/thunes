@@ -7,45 +7,44 @@
 {% block content %}
 <h2>Liste des groupes</h2>
 
-  <a href="{% url "Users:create_group" %}"> {% bootstrap_button "Créer un groupe" button_type="link" %} </a>
+<div class="container">
+  {% if not groups %}
+  <div class="row">
+    Vous n'êtes actuellement dans aucun groupe
+  </div>
+  {% else %}
+  <div class="row">
+    <div class="table-responsive">
 
-
-{% if not groups %}
-
-  <br><br>
-Vous n'êtes actuellement dans aucun groupe
-
-{% else %}
-
-
-<div class="table-responsive">
-
-  <table class="table table-striped">
-    <thead>
-      <tr>
-	<td>Nom du groupe</td>
-	<td>Membres</td>
-      </tr>
-    </thead>
-    {% for group in groups %}
-    <tr>
-    </tr>
-    <tr>
-      <td>
-	<a href="{% url 'MyMoney:balance' group.id %}" class="nav-link"> {{ group.name }}</a>
-      </td>
-      <td>
-	{% if not group.user_set.all %}
-	<ul> Ce groupe n'a aucun membre </ul>
-	{% else %}
-	{% for user in group.user_set.all %}
-	<li> {{ user }} </li>
-	{% endfor %}
-	{% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nom du groupe</th>
+            <th>Membres</th>
+          </tr>
+        </thead>
+        {% for group in groups %}
+        <tr>
+          <td>
+            <a href="{% url 'MyMoney:balance' group.id %}" class="nav-link"> {{ group.name }}</a>
+          </td>
+          <td>
+            {% if not group.user_set.all %}
+            <ul> Ce groupe n'a aucun membre </ul>
+            {% else %}
+            {% for user in group.user_set.all %}
+            <li> {{ user }} </li>
+            {% endfor %}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  <div class="row p-2">
+    <a class="mx-auto" href="{% url 'Users:create_group' %}"> {% bootstrap_button "Créer un groupe" button_type="link" %} </a>
+  </div>
+</div>
 {% endif %}
 {% endblock %}

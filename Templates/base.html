@@ -15,11 +15,11 @@
 {% if debug %}
 <style type="text/css">
   body {
-  background: url('{% static "./development.png" %}') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+    background: url('{% static "./development.png" %}') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
   }
 </style>
 {% endif %}
@@ -27,50 +27,53 @@
 
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <title>{% block title %}Thunes !!{% endblock %}</title>
-  </head>
 
-  <body>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-      {% if request.user.is_authenticated %}
-      <ul class="navbar-nav">
-	<li class="nav-item dropdown">
-	  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"> {% bs_icon "people-fill" %} Utilisateurs</a>
-	  <ul class="dropdown-menu">
-	    <a class="dropdown-item" href="{% url 'Users:users' %}">Utilisateurs</a>
-	    <a class="dropdown-item" href="{% url 'Users:groups' %}">Groupes</a>
-	  </ul>
-	</li>
-      </ul>
+<head>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+    integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <title>{% block title %}Thunes !!{% endblock %}</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    {% if request.user.is_authenticated %}
+    <ul class="navbar-nav">
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"> {% bs_icon "people-fill" %}
+          Utilisateurs</a>
+        <ul class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'Users:users' %}">Utilisateurs</a>
+          <a class="dropdown-item" href="{% url 'Users:groups' %}">Groupes</a>
+        </ul>
+      </li>
+    </ul>
+    {% endif %}
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        {% if request.user.is_authenticated %}
+        {% if request.user.is_superuser %}
+
+        <a class='nav-link' href="{% url 'Users:create_user' %}"> Créer un utilisateur </a>
+        {% endif %}
+
+      <li class="nav-item">
+        <a class="nav-link" href="#"> Bienvenue {{ user.get_username }} </a>
+      </li>
+      <a class="nav-link" href="{% url 'logout' %}">{% bs_icon "box-arrow-right"%} Logout </a>
+      {% else %}
+      <a class="nav-link" href="{% url 'login' %}">{% bs_icon "box-arrow-left" %} Login </a>
       {% endif %}
-      <ul class="navbar-nav ml-auto"
-	      <li class="nav-item">
-		{% if request.user.is_authenticated %}
-		{% if request.user.is_superuser %}
-
-		  <a class='nav-link' href="{% url "Users:create_user" %}"> Créer un utilisateur </a>
-		  {% endif %}
-		
-	      <li class="nav-item">
-		<a class="nav-link" href="#"> Bienvenue {{ user.get_username }} </a>
-	      </li>
-		<a class="nav-link" href="{% url 'logout' %}">{% bs_icon "box-arrow-right"%} Logout </a>
-		{% else %}
-		<a class="nav-link" href="{% url 'login' %}">{% bs_icon "box-arrow-left" %} Login </a>
-		{% endif %}
-	      </li>
-      </ul>
-    </nav>
-    </br>
-    <div class="container">
-      {% block content %}
-      {% endblock %}
-    </div>
-
-    {% block extrascripts %}
+      </li>
+    </ul>
+  </nav>
+  </br>
+  <div class="container">
+    {% block content %}
     {% endblock %}
-  </body>
+  </div>
+
+  {% block extrascripts %}
+  {% endblock %}
+</body>
 
 </html>
