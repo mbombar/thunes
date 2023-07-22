@@ -4,4 +4,4 @@ django-bootstrap-icons
 django-bootstrap-datepicker-plus
 django-mathfilters
 psycopg2-binary
-python-memcached
+pymemcache

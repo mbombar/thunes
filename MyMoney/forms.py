@@ -3,7 +3,7 @@ from django.contrib.auth.models import User, Group
 
 import MyMoney.models as models
 
-from bootstrap_datepicker_plus import DatePickerInput
+from bootstrap_datepicker_plus.widgets import DatePickerInput
 
 from django.core.exceptions import ValidationError
 
