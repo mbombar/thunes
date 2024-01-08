@@ -1,9 +1,8 @@
 from django import forms
-from django.forms import ModelForm, Form, ModelMultipleChoiceField
-
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Group, User
+from .models import Group
 
 
 class UserCreationFormWithEmail(UserCreationForm):
@@ -20,7 +19,7 @@ class GroupCreateOrEditForm(forms.ModelForm):
             self.fields['name'].widget.attrs['readonly'] = 'true'
         except:
             pass
-    members = ModelMultipleChoiceField(queryset = User.objects.all(), widget=forms.CheckboxSelectMultiple)
+    members = forms.ModelMultipleChoiceField(queryset = get_user_model().objects.all(), widget=forms.CheckboxSelectMultiple)
     class Meta:
         model = Group
         fields = ['name',]

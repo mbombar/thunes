@@ -1,16 +1,11 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-
-from django.core.exceptions import ValidationError
 
 from MyMoney.utils import add_to_group
 
 from .models import (
     Group,
-    User,
 )
 
 from .forms import (
@@ -31,7 +26,7 @@ def create_user(request):
             username = form['username'].value()
             email = form['email'].value()
             form.save()
-            new_user = User.objects.get(username=username)
+            new_user = get_user_model().objects.get(username=username)
             new_user.email = email
             new_user.save()
             return redirect("/")

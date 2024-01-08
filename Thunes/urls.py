@@ -26,6 +26,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('money/', include('MyMoney.urls')),
     path('users/', include('Users.urls')),
+    path('api/', include('api.urls')),
 ]
 
 if "Notifications" in settings.INSTALLED_APPS:

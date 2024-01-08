@@ -1,5 +1,6 @@
 __pycache__/
 .env
+env/
 db.sqlite3
 django
 *.bak
@@ -10,3 +11,5 @@ Thunes/settings_local.py
 !static/
 static/*
 !static/development.png
+
+.vscode/
